@@ -1,0 +1,302 @@
+<div id="moon-wolf-nook">
+  <div class="mn-heading">
+    <div><h2>月亮违章小窝</h2><div class="text-small text-muted">住着一只叫 Flewolf 的小狼</div></div>
+    <button type="button" class="btn btn-ghost" data-action="moon" aria-label="戳戳月亮，发现小秘密"><i data-lucide="moon" aria-hidden="true"></i></button>
+  </div>
+  <canvas class="mn-scene cursor-interaction" role="img" aria-label="一只奶油色的毛茸茸小狼，坐在星空下的云朵窝里。下方按钮可以摸摸它、偷星星、让它打滚或盖被子。"></canvas>
+  <div class="mn-caption" aria-live="polite" aria-atomic="true">你来啦。它给你留了最软的那一块。</div>
+  <div class="viz-controls mn-actions">
+    <button type="button" class="btn" data-action="pet"><i data-lucide="hand" aria-hidden="true"></i> 摸摸毛</button>
+    <button type="button" class="btn" data-action="star"><i data-lucide="sparkles" aria-hidden="true"></i> 偷颗星</button>
+    <button type="button" class="btn" data-action="roll"><i data-lucide="rotate-ccw" aria-hidden="true"></i> 阴暗打滚</button>
+    <button type="button" class="btn btn-primary" data-action="sleep" aria-pressed="false"><i data-lucide="moon" aria-hidden="true"></i> <span>盖好被子</span></button>
+  </div>
+  <div class="mn-footer text-small text-muted">可以直接戳小狼。月亮也可以。</div>
+  <style>
+    #moon-wolf-nook { width:100%; color:var(--foreground); }
+    #moon-wolf-nook .mn-heading { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:8px 94px 18px 2px; }
+    #moon-wolf-nook h2 { margin:0 0 5px; }
+    #moon-wolf-nook .mn-scene { display:block; width:100%; height:380px; touch-action:pan-y; }
+    #moon-wolf-nook .mn-caption { min-height:3.4em; display:flex; align-items:center; justify-content:center; text-align:center; padding:14px 12px 5px; }
+    #moon-wolf-nook .mn-actions { justify-content:center; padding-top:7px; }
+    #moon-wolf-nook .mn-footer { text-align:center; margin:14px 0 7px; }
+    #moon-wolf-nook .mn-probe { display:none; }
+    @media (max-width:440px) { #moon-wolf-nook .mn-scene { height:325px; } #moon-wolf-nook .mn-heading { padding-right:90px; gap:5px; } }
+  </style>
+  <script>
+  (() => {
+    const root = document.getElementById('moon-wolf-nook');
+    const canvas = root.querySelector('canvas');
+    const ctx = canvas.getContext('2d');
+    const caption = root.querySelector('.mn-caption');
+    const sleepButton = root.querySelector('[data-action="sleep"]');
+    const probe = document.createElement('span');
+    probe.className = 'mn-probe'; root.appendChild(probe);
+    const themeCanvas = document.createElement('canvas');
+    themeCanvas.width=1; themeCanvas.height=1;
+    const themeContext = themeCanvas.getContext('2d');
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let W=680, H=380, S=1, cx=340, cy=242, moonX=548, moonY=76;
+    let colors={}, sleeping=false, action='', started=0, duration=0, frame=0;
+    let petCount=0, starCount=0, rollCount=0, moonCount=0;
+    let particles=[], sparkleUntil=0, pointerDown=null, lastStroke=0;
+    const skyPoints = Array.from({length:49},(_,i)=>({
+      x:((i*0.61803398875+0.075)%1), y:(((Math.sin(i*12.9898+19)*43758.5453)%1+1)%1)*0.74,
+      r:i%7===0?2.8:(i%3===0?1.5:0.9), a:0.24+(i%5)*0.1
+    }));
+    const petLines = [
+      '（把脑袋往你的手心里又塞了一点）',
+      '嘴上没说什么，尾巴已经摇成螺旋桨。',
+      '摸着摸着，小狼逐渐失去了骨头。',
+      '批准你今晚只当一只毛茸茸的生物。',
+      '它偷偷把你的手认领成了枕头。'
+    ];
+    const starLines = [
+      '偷到一颗椰子炒冰味的星星。凉凉，甜甜。',
+      '月亮少了一颗拼豆。它决定睁一只眼闭一只眼。',
+      '这颗星星零元包邮。小狼阴暗地收下了。',
+      '稀有掉落：一颗永远不会燃尽的额度星。',
+      '星星小声说：快把我藏进被窝。',
+      '赃物有点多。尾巴底下已经开始发光。'
+    ];
+    const rollLines = [
+      '阴暗打滚成功。月亮假装没看见。',
+      '这不是狼。这是一只正在翻面的糯米糍。',
+      '严肃声明：刚才是月球在转。',
+      '地板很软。可以再赖一会儿。'
+    ];
+    const moonLines = [
+      '月亮：营业执照没有，偏心许可有。',
+      '月亮：这间违章小窝，罚你在里面好好睡一觉。',
+      '月亮偷偷坦白：它也是一颗没拼完的豆。',
+      '小秘密：整个宇宙里，这一小块软绵绵是给你的。'
+    ];
+    function color(value) { probe.style.color=value; return getComputedStyle(probe).color; }
+    function palette() {
+      themeContext.fillStyle=color('var(--background)');themeContext.fillRect(0,0,1,1);
+      const bg=themeContext.getImageData(0,0,1,1).data;
+      const dark=bg[0]*.2126+bg[1]*.7152+bg[2]*.0722<140;
+      const ink=dark?'var(--background)':'var(--foreground)';
+      const paper=dark?'var(--foreground)':'var(--background)';
+      const mix=(a,b,n)=>color('color-mix(in srgb, '+a+' '+n+'%, '+b+')');
+      colors={
+        sky:mix(ink,'var(--purple)',87), horizon:mix(ink,'var(--purple)',65),
+        ink:mix(ink,'var(--purple)',90), fur:mix(paper,'var(--yellow)',91),
+        furShade:mix(paper,'var(--purple)',77), furLight:mix(paper,'var(--yellow)',97),
+        pink:mix(paper,'var(--red)',74), blush:mix(paper,'var(--red)',62),
+        moon:mix(paper,'var(--yellow)',57), moonLight:mix(paper,'var(--yellow)',83),
+        mint:mix(paper,'var(--green)',69), cloud:mix(paper,'var(--purple)',72),
+        cloudShade:mix(paper,'var(--purple)',54), quilt:mix(paper,'var(--blue)',53),
+        quiltDark:mix(paper,'var(--purple)',43), thread:mix(paper,'var(--blue)',82),
+        white:color(paper), nightText:mix(paper,'var(--purple)',79)
+      };
+    }
+    function ellipse(x,y,rx,ry,fill,rotation=0) {
+      ctx.beginPath(); ctx.ellipse(x,y,rx,ry,rotation,0,Math.PI*2); ctx.fillStyle=fill; ctx.fill();
+    }
+    function path(fill,commands,stroke,width=1.5) {
+      ctx.beginPath(); commands();
+      if(fill) {ctx.fillStyle=fill;ctx.fill();}
+      if(stroke) {ctx.strokeStyle=stroke;ctx.lineWidth=width;ctx.lineCap='round';ctx.lineJoin='round';ctx.stroke();}
+    }
+    function line(x1,y1,x2,y2,c,w=1) {path(null,()=>{ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);},c,w);}
+    function star(x,y,r,fill,rotation=0) {
+      ctx.save(); ctx.translate(x,y); ctx.rotate(rotation);
+      path(fill,()=>{for(let j=0;j<10;j++){const a=j*Math.PI/5-Math.PI/2,rr=j%2?r*0.46:r; j?ctx.lineTo(Math.cos(a)*rr,Math.sin(a)*rr):ctx.moveTo(Math.cos(a)*rr,Math.sin(a)*rr);}ctx.closePath();});ctx.restore();
+    }
+    function heart(x,y,r,fill) {
+      ctx.save();ctx.translate(x,y);ctx.scale(r/12,r/12);
+      path(fill,()=>{ctx.moveTo(0,9);ctx.bezierCurveTo(-23,-4,-8,-18,0,-7);ctx.bezierCurveTo(8,-18,23,-4,0,9);});ctx.restore();
+    }
+    function glow(x,y,r,fill,alpha) {ctx.save();ctx.globalAlpha=alpha;const g=ctx.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,fill);g.addColorStop(1,'transparent');ctx.fillStyle=g;ctx.fillRect(x-r,y-r,r*2,r*2);ctx.restore();}
+    function cloud(x,y,w,h,fill) {
+      ellipse(x,y,w*.47,h*.48,fill);
+      ellipse(x-w*.28,y-h*.06,w*.18,h*.47,fill);
+      ellipse(x-w*.08,y-h*.25,w*.2,h*.49,fill);
+      ellipse(x+w*.15,y-h*.2,w*.21,h*.49,fill);
+      ellipse(x+w*.32,y+h*.01,w*.14,h*.38,fill);
+    }
+    function drawSky(now,p) {
+      const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,colors.sky);g.addColorStop(1,colors.horizon);
+      ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+      glow(W*.48,H*.66,W*.61,colors.cloudShade,.12);
+      glow(moonX,moonY,90,colors.moon,.19);
+      skyPoints.forEach((st,i)=>{
+        const x=st.x*W, y=22+st.y*(H-45);
+        const twinkle=now<sparkleUntil?.22*Math.sin(now/300+i):0;
+        ctx.globalAlpha=Math.max(.1,st.a+twinkle)*(sleeping?.65:1);
+        if(i%7===0){line(x-st.r,y,x+st.r,y,colors.moonLight,1.1);line(x,y-st.r,x,y+st.r,colors.moonLight,1.1);}
+        else ellipse(x,y,st.r,st.r,colors.moonLight);
+      });ctx.globalAlpha=1;
+      // A tiny hand-sewn constellation over the nest.
+      const k=W<430?.75:1, lx=W*.2, ly=58;
+      ctx.globalAlpha=.28; path(null,()=>{ctx.moveTo(lx-23*k,ly+17);ctx.lineTo(lx,ly);ctx.lineTo(lx+29*k,ly+11);ctx.lineTo(lx+44*k,ly+42);},colors.moonLight,1);
+      ctx.globalAlpha=.8; [[-23,17],[0,0],[29,11],[44,42]].forEach(([x,y],i)=>star(lx+x*k,ly+y,(i===1?4:2.7),colors.moonLight));ctx.globalAlpha=1;
+      const wiggle=action==='moon'?Math.sin(p*Math.PI*4)*(1-p)*.15:0;
+      ctx.save();ctx.translate(moonX,moonY);ctx.rotate(wiggle);
+      ellipse(0,0,31,31,colors.moon);ellipse(8,-8,24,24,colors.sky);
+      // The moon's sleepy face.
+      path(null,()=>{ctx.moveTo(-15,9);ctx.quadraticCurveTo(-12,12,-9,8);},colors.ink,1.6);
+      ellipse(-20,14,4,2,colors.pink);ctx.restore();
+      // Fine thread and a dangling star over the bed.
+      const sx=W*.83, sy=H*.54;
+      ctx.globalAlpha=.4;path(null,()=>{ctx.moveTo(sx+14,0);ctx.quadraticCurveTo(sx-4,sy*.6,sx,sy);},colors.thread,1);ctx.globalAlpha=1;
+      star(sx,sy,7,colors.moon,-.13);
+      ctx.globalAlpha=.12;cloud(W*.04,H*.66,145,36,colors.cloud);cloud(W*.96,H*.76,180,43,colors.cloud);ctx.globalAlpha=1;
+    }
+    function drawNest() {
+      const by=cy+93*S, bw=Math.min(W*.87,470);
+      glow(cx,by,200*S,colors.moonLight,.07);
+      ellipse(cx,by+37*S,bw*.39,14*S,colors.sky);
+      cloud(cx,by+10*S,bw,85*S,colors.cloudShade);
+      cloud(cx,by-3*S,bw*.98,74*S,colors.cloud);
+      ctx.globalAlpha=.55;cloud(cx-25*S,by-11*S,bw*.75,47*S,colors.furLight);ctx.globalAlpha=1;
+      // A few stitches make this a very unofficial cloud mattress.
+      ctx.globalAlpha=.45;
+      for(let i=0;i<10;i++){const x=cx+(i-4.5)*24*S;line(x,by+20*S,x+6*S,by+23*S,colors.cloudShade,1.5);}
+      ctx.globalAlpha=1;
+      // Stolen starlight accumulates under the tail, with no counter.
+      for(let i=0;i<Math.min(starCount,7);i++){
+        const x=cx+(82+(i%3)*18)*S, y=by-5*S-Math.floor(i/3)*15*S;
+        glow(x,y,20*S,colors.moon,.15);star(x,y,(6+i%2)*S,colors.moon,i*.5);
+      }
+    }
+    function drawWolf(now,p) {
+      const rolling=action==='roll';
+      const petting=action==='pet';
+      const bob=petting?Math.sin(p*Math.PI*4)*Math.sin(p*Math.PI)*5:0;
+      const happy=petting||action==='star';
+      ctx.save();ctx.translate(cx+(rolling?Math.sin(p*Math.PI*2)*28*S:0),cy+(rolling?-Math.sin(p*Math.PI)*25*S:0));
+      if(rolling)ctx.rotate(p*Math.PI*2);
+      ctx.scale(S*(petting?1+Math.sin(p*Math.PI*4)*.025:1),S*(petting?1-Math.sin(p*Math.PI*4)*.035:1));
+      const wag=petting?Math.sin(p*Math.PI*10)*.16:0;
+      ctx.save();ctx.translate(49,43);ctx.rotate(wag);
+      path(colors.furShade,()=>{ctx.moveTo(-5,30);ctx.bezierCurveTo(45,50,106,30,118,-20);ctx.bezierCurveTo(119,-11,110,-8,105,-6);ctx.bezierCurveTo(128,-46,105,-60,110,-80);ctx.bezierCurveTo(70,-71,54,-36,59,-12);ctx.bezierCurveTo(35,-6,10,-12,-5,8);ctx.closePath();});
+      path(colors.furLight,()=>{ctx.moveTo(110,-80);ctx.bezierCurveTo(83,-70,64,-49,61,-27);ctx.lineTo(70,-33);ctx.lineTo(72,-21);ctx.lineTo(82,-31);ctx.lineTo(86,-20);ctx.lineTo(99,-37);ctx.lineTo(101,-23);ctx.bezierCurveTo(118,-50,105,-63,110,-80);});ctx.restore();
+      // Chubby pear-shaped body, paws and a warm belly.
+      ellipse(0,30,68,61,colors.furShade);
+      ellipse(-5,24,64,59,colors.fur);
+      ellipse(-5,45,42,36,colors.furLight);
+      ellipse(-43,78,25,13,colors.furLight,-.1);ellipse(34,78,25,13,colors.furLight,.1);
+      ctx.globalAlpha=.5;line(-48,81,-48,85,colors.furShade,1.5);line(-41,81,-41,85,colors.furShade,1.5);line(29,81,29,85,colors.furShade,1.5);line(36,81,36,85,colors.furShade,1.5);ctx.globalAlpha=1;
+      ctx.save();ctx.translate(0,bob);ctx.rotate(petting?Math.sin(p*Math.PI)*-.08:0);
+      // Soft, slightly mismatched ears.
+      path(colors.furShade,()=>{ctx.moveTo(-56,-52);ctx.bezierCurveTo(-79,-76,-64,-109,-59,-121);ctx.bezierCurveTo(-43,-119,-22,-88,-18,-74);ctx.closePath();});
+      path(colors.fur,()=>{ctx.moveTo(16,-73);ctx.bezierCurveTo(28,-93,48,-117,58,-116);ctx.bezierCurveTo(71,-96,72,-68,56,-48);ctx.closePath();});
+      path(colors.pink,()=>{ctx.moveTo(-54,-65);ctx.quadraticCurveTo(-64,-85,-57,-105);ctx.quadraticCurveTo(-36,-88,-33,-74);ctx.closePath();});
+      path(colors.pink,()=>{ctx.moveTo(35,-75);ctx.quadraticCurveTo(43,-93,55,-101);ctx.quadraticCurveTo(61,-81,54,-67);ctx.closePath();});
+      // Tufts around the cheeks make a fluffy silhouette without a hard outline.
+      ellipse(0,-36,72,61,colors.fur);
+      [[-61,-37,18,17],[-67,-17,17,13],[-57,2,17,12],[59,-35,18,17],[67,-14,15,13],[57,4,17,11],[-26,-82,19,14],[0,-85,22,14],[24,-81,20,14]].forEach(v=>ellipse(...v,colors.fur));
+      path(colors.furLight,()=>{ctx.moveTo(-54,-18);ctx.bezierCurveTo(-41,-30,-24,-18,0,-21);ctx.bezierCurveTo(27,-22,42,-33,57,-14);ctx.bezierCurveTo(60,12,29,27,0,26);ctx.bezierCurveTo(-30,26,-58,10,-54,-18);});
+      // Forehead fluff.
+      path(colors.furLight,()=>{ctx.moveTo(-25,-87);ctx.quadraticCurveTo(-17,-105,-8,-97);ctx.quadraticCurveTo(-5,-110,6,-98);ctx.quadraticCurveTo(21,-101,23,-87);});
+      ctx.globalAlpha=.7;ellipse(-39,-9,12,6,colors.pink);ellipse(39,-9,12,6,colors.pink);ctx.globalAlpha=1;
+      if(sleeping) {
+        path(null,()=>{ctx.moveTo(-34,-22);ctx.quadraticCurveTo(-26,-15,-17,-22);ctx.moveTo(17,-22);ctx.quadraticCurveTo(26,-15,34,-22);},colors.ink,2.5);
+      } else if(happy) {
+        path(null,()=>{ctx.moveTo(-34,-19);ctx.quadraticCurveTo(-26,-29,-17,-19);ctx.moveTo(17,-19);ctx.quadraticCurveTo(26,-29,34,-19);},colors.ink,2.5);
+      } else {
+        ellipse(-25,-23,3.5,5.3,colors.ink);ellipse(25,-23,3.5,5.3,colors.ink);
+        ellipse(-24,-24.5,1,1.4,colors.furLight);ellipse(26,-24.5,1,1.4,colors.furLight);
+      }
+      path(colors.ink,()=>{ctx.moveTo(-5,-8);ctx.quadraticCurveTo(0,-11,5,-8);ctx.quadraticCurveTo(5,-4,0,-2);ctx.quadraticCurveTo(-5,-4,-5,-8);});
+      path(null,()=>{ctx.moveTo(0,-2);ctx.lineTo(0,2);ctx.quadraticCurveTo(-4,8,-9,3);ctx.moveTo(0,2);ctx.quadraticCurveTo(4,8,9,3);},colors.ink,1.6);
+      // An illegally acquired star hair clip.
+      star(50,-66,9,colors.moon,.15);
+      ellipse(46,-65,1.2,1.2,colors.furLight);
+      ctx.restore();
+      ellipse(-51,34,16,24,colors.furLight,-.32);ellipse(43,34,16,24,colors.furLight,.32);
+      if(action==='star'&&p>.58){glow(-2,37,30,colors.moon,.3);star(-2,37,13,colors.moon,p*.2);}
+      if(sleeping) {
+        // A quilt with hand-stitched moon and star patches.
+        path(colors.quiltDark,()=>{ctx.moveTo(-82,20);ctx.quadraticCurveTo(0,3,79,20);ctx.lineTo(92,81);ctx.quadraticCurveTo(0,104,-88,83);ctx.closePath();});
+        path(colors.quilt,()=>{ctx.moveTo(-82,18);ctx.quadraticCurveTo(0,4,79,18);ctx.lineTo(84,72);ctx.quadraticCurveTo(-1,95,-84,75);ctx.closePath();});
+        ctx.save();ctx.globalAlpha=.25;
+        [-47,-8,32].forEach(x=>path(null,()=>{ctx.moveTo(x,20);ctx.quadraticCurveTo(x+3,55,x+6,83);},colors.thread,1));
+        [39,62].forEach(y=>path(null,()=>{ctx.moveTo(-80,y);ctx.quadraticCurveTo(0,y-8,82,y);},colors.thread,1));ctx.restore();
+        star(-47,43,8,colors.moon,.2);star(34,64,6,colors.moonLight,-.2);
+        heart(18,33,6,colors.pink);star(-22,70,4,colors.thread);
+        path(null,()=>{ctx.moveTo(-80,22);ctx.quadraticCurveTo(0,8,78,22);},colors.thread,5);
+        ellipse(-47,18,15,8,colors.furLight,-.08);ellipse(43,17,15,8,colors.furLight,.08);
+      }
+      ctx.restore();
+    }
+    function drawMovingStar(p) {
+      if(action!=='star'||p>.7)return;
+      const t=Math.min(1,p/.7), x=moonX+(cx-moonX)*t, y=moonY+(cy+37*S-moonY)*t-Math.sin(t*Math.PI)*75;
+      glow(x,y,34,colors.moon,.24);star(x,y,11*S,colors.moon,t*2.8);
+      for(let i=1;i<5;i++){const u=Math.max(0,t-i*.035), xx=moonX+(cx-moonX)*u, yy=moonY+(cy+37*S-moonY)*u-Math.sin(u*Math.PI)*75;ctx.globalAlpha=(1-i/5)*.4;ellipse(xx,yy,2,2,colors.moon);}
+      ctx.globalAlpha=1;
+    }
+    function drawParticles(now) {
+      particles=particles.filter(pt=>now-pt.born<pt.life);
+      particles.forEach(pt=>{const t=(now-pt.born)/pt.life;ctx.globalAlpha=Math.sin(t*Math.PI)*.85;const x=pt.x+pt.vx*t,y=pt.y-pt.rise*t;if(pt.heart)heart(x,y,pt.size*(.6+.4*t),colors.pink);else star(x,y,pt.size,colors.moon,t*2);});ctx.globalAlpha=1;
+    }
+    function draw(now) {
+      frame=0;
+      if(!root.isConnected)return;
+      const elapsed=now-started;
+      const p=duration?Math.min(1,elapsed/duration):1;
+      if(action&&p>=1)action='';
+      ctx.clearRect(0,0,W,H);
+      // The vignette is part of the illustration, not a UI panel.
+      ctx.save();ctx.beginPath();ctx.roundRect(0,0,W,H,24);ctx.clip();
+      drawSky(now,p);drawNest();drawWolf(now,p);drawMovingStar(p);drawParticles(now);
+      if(sleeping){ctx.globalAlpha=.11;ctx.fillStyle=colors.sky;ctx.fillRect(0,0,W,H);ctx.globalAlpha=1;glow(cx,cy-16*S,110*S,colors.moon,.07);}
+      ctx.restore();
+      if(!reduced.matches&&(action||particles.length||now<sparkleUntil))frame=requestAnimationFrame(draw);
+    }
+    function requestDraw() {if(!frame)frame=requestAnimationFrame(draw);}
+    function burst(kind) {
+      if(reduced.matches)return;
+      const now=performance.now();
+      for(let i=0;i<8;i++)particles.push({born:now,life:1400+i*80,x:cx+(i%2?-1:1)*(36+i*5)*S,y:cy-(15+i%3*20)*S,vx:(i-3.5)*12,rise:35+i%3*17,size:5+i%3,heart:kind==='pet'});
+      if(particles.length>70)particles.splice(0,particles.length-70);
+    }
+    function setSleep(value) {
+      sleeping=value;sleepButton.setAttribute('aria-pressed',String(value));sleepButton.querySelector('span').textContent=value?'再赖一会':'盖好被子';
+      canvas.setAttribute('aria-label',value?'小狼盖着星星被子，在月亮旁安安静静地睡着了。':'毛茸茸的小狼醒着，坐在云朵窝里，耳朵上别着一颗小星星。');
+    }
+    function act(kind) {
+      const now=performance.now();
+      if(kind==='sleep'){
+        setSleep(!sleeping); action='';particles=[];sparkleUntil=0;
+        caption.textContent=sleeping?'被窝封印完毕。晚安，小狼。梦里也有软软的地方。':'（从被子里钻出来）好吧，再陪月亮赖一小会。';
+      } else if(kind==='moon') {
+        caption.textContent=moonLines[moonCount++%moonLines.length];action='moon';duration=1000;
+        sparkleUntil=reduced.matches?0:now+1600;
+      } else {
+        setSleep(false);action=kind;duration=kind==='roll'?1250:kind==='star'?1550:1250;
+        if(kind==='pet'){caption.textContent=petLines[petCount++%petLines.length];burst('pet');}
+        if(kind==='star'){caption.textContent=starLines[starCount%starLines.length];starCount++;burst('star');sparkleUntil=reduced.matches?0:now+1900;}
+        if(kind==='roll'){caption.textContent=rollLines[rollCount++%rollLines.length];burst('star');}
+      }
+      started=now;
+      if(reduced.matches){action='';particles=[];sparkleUntil=0;}
+      requestDraw();
+    }
+    root.querySelectorAll('button[data-action]').forEach(button=>button.addEventListener('click',()=>act(button.dataset.action)));
+    function point(e){const r=canvas.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top};}
+    function onWolf(pt){return Math.abs(pt.x-cx)<104*S&&pt.y>cy-125*S&&pt.y<cy+92*S;}
+    canvas.addEventListener('pointerdown',e=>{pointerDown={...point(e),id:e.pointerId};});
+    canvas.addEventListener('pointerup',e=>{const pt=point(e),down=pointerDown;pointerDown=null;if(!down||down.id!==e.pointerId||Math.hypot(pt.x-down.x,pt.y-down.y)>18)return;if(Math.hypot(pt.x-moonX,pt.y-moonY)<44){act('moon');}else if(onWolf(pt)){act('pet');}else{act('star');}});
+    canvas.addEventListener('pointercancel',()=>{pointerDown=null;});
+    canvas.addEventListener('pointermove',e=>{if(e.pointerType!=='mouse'||!e.buttons||!pointerDown)return;const now=performance.now();if(onWolf(point(e))&&now-lastStroke>850){act('pet');lastStroke=now;}});
+    function resize() {
+      const rect=canvas.getBoundingClientRect();W=rect.width;H=rect.height;
+      if(!W||!H)return;
+      const dpr=Math.min(window.devicePixelRatio||1,2);
+      canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);
+      S=Math.min(1.04,W/440);cx=W*.49;cy=H*.61;moonX=W*.8;moonY=H*.2;
+      palette();requestDraw();
+    }
+    const observer=new ResizeObserver(resize);observer.observe(canvas);
+    const themeQuery=window.matchMedia('(prefers-color-scheme: dark)');themeQuery.addEventListener('change',resize);
+    const themeObserver=new MutationObserver(()=>{palette();requestDraw();});
+    [document.documentElement,document.body].forEach(el=>themeObserver.observe(el,{attributes:true,attributeFilter:['class','style','data-theme']}));
+    const cleanup=new MutationObserver(()=>{if(!root.isConnected){cancelAnimationFrame(frame);observer.disconnect();themeObserver.disconnect();themeQuery.removeEventListener('change',resize);cleanup.disconnect();}});cleanup.observe(document.body,{childList:true,subtree:true});
+    resize();
+  })();
+  </script>
+</div>

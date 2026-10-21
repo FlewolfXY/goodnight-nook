@@ -1,0 +1,1 @@
+ALTER TABLE `nook_states` ADD `souvenirs` integer DEFAULT 0 NOT NULL;

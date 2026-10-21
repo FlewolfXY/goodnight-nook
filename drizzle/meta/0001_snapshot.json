@@ -1,0 +1,145 @@
+{
+  "version": "6",
+  "dialect": "sqlite",
+  "id": "b3265973-d1f0-4226-ab21-3a85a1f60c78",
+  "prevId": "dabb4203-3f1d-43c7-b47d-59e6574c8dcc",
+  "tables": {
+    "nook_states": {
+      "name": "nook_states",
+      "columns": {
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "version": {
+          "name": "version",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 1
+        },
+        "paper": {
+          "name": "paper",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "souvenirs": {
+          "name": "souvenirs",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "pillow": {
+          "name": "pillow",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "pillow_welcomed": {
+          "name": "pillow_welcomed",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "pillow_place": {
+          "name": "pillow_place",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'newton'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "pillow_made_at": {
+          "name": "pillow_made_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "revision": {
+          "name": "revision",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "nook_version_v1": {
+          "name": "nook_version_v1",
+          "value": "\"nook_states\".\"version\" = 1"
+        },
+        "nook_paper_boolean": {
+          "name": "nook_paper_boolean",
+          "value": "\"nook_states\".\"paper\" IN (0, 1)"
+        },
+        "nook_pillow_boolean": {
+          "name": "nook_pillow_boolean",
+          "value": "\"nook_states\".\"pillow\" IN (0, 1)"
+        },
+        "nook_welcomed_boolean": {
+          "name": "nook_welcomed_boolean",
+          "value": "\"nook_states\".\"pillow_welcomed\" IN (0, 1)"
+        },
+        "nook_pillow_place": {
+          "name": "nook_pillow_place",
+          "value": "\"nook_states\".\"pillow_place\" IN ('newton', 'wolf')"
+        },
+        "nook_welcomed_requires_pillow": {
+          "name": "nook_welcomed_requires_pillow",
+          "value": "\"nook_states\".\"pillow_welcomed\" = 0 OR \"nook_states\".\"pillow\" = 1"
+        },
+        "nook_made_at_matches_pillow": {
+          "name": "nook_made_at_matches_pillow",
+          "value": "(\"nook_states\".\"pillow\" = 0 AND \"nook_states\".\"pillow_made_at\" IS NULL) OR (\"nook_states\".\"pillow\" = 1 AND \"nook_states\".\"pillow_made_at\" IS NOT NULL)"
+        },
+        "nook_revision_nonnegative": {
+          "name": "nook_revision_nonnegative",
+          "value": "\"nook_states\".\"revision\" >= 0"
+        }
+      }
+    }
+  },
+  "views": {},
+  "enums": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  },
+  "internal": {
+    "indexes": {}
+  }
+}

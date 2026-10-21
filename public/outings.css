@@ -1,0 +1,20 @@
+.outing-heading{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:0 4px 20px}.outing-heading h2{margin:4px 0 9px}.outing-heading p{margin:0}.outing-heading>span{font-size:36px;color:#a6c1be;padding:8px}.outing-eyebrow{font-size:10px;letter-spacing:.17em;color:var(--room-muted,#a8a9bd)}.outing-canvas{display:block;width:100%;height:460px;border-radius:25px;touch-action:pan-y;cursor:pointer}.outing-cast{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:10px}.outing-caption{display:flex;align-items:center;justify-content:center;min-height:5.8em;max-width:610px;margin:0 auto;text-align:center;line-height:1.85;padding:12px 6px;font-size:14px}.outing-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;max-width:580px;margin:auto}.outing-save{font-size:11px;color:var(--room-muted,#a8a9bd);text-align:center;min-height:1.8em;margin:15px 0 6px}.outing-next{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 24px;font-size:11px;color:var(--room-muted,#a8a9bd);margin-top:20px}.outing-next a{padding:8px 0;line-height:1.7}.outing-next a:hover{color:var(--room-text,#eee1ef)}@media(max-width:540px){.outing-canvas{height:330px}.outing-heading{padding-bottom:15px;gap:3px}.outing-heading>span{font-size:27px;padding:2px}.outing-heading h2{font-size:22px}.outing-heading .text-small{max-width:290px}.outing-cast{grid-template-columns:repeat(2,1fr);gap:0}.outing-caption{font-size:13px;min-height:7.5em}.outing-actions{gap:8px}.outing-next{margin-top:8px}.outing-actions .btn{font-size:12px;padding:10px 6px;min-height:46px}}
+
+.ink-scene .outing-actions [data-action="sleep"]{grid-column:1/-1}
+
+.cinema-scene .outing-actions [data-action="sleep"]{grid-column:1/-1}
+
+.dessert-scene .outing-actions [data-action="sleep"]{grid-column:1/-1}
+
+/* Native object targets share their bounds with the Canvas geometry. */
+.curio-stage{position:relative;width:100%;isolation:isolate}
+.curio-stage .outing-canvas{display:block}
+.curio-hotspot{position:absolute;z-index:1;transform:translate(-50%,-50%);display:block;min-width:44px;min-height:44px;margin:0;padding:0;border:0;border-radius:12px;background:transparent;color:inherit;appearance:none;cursor:pointer;touch-action:manipulation;outline:1px solid transparent;outline-offset:3px;-webkit-tap-highlight-color:transparent}
+@media(hover:hover){.curio-hotspot:hover{outline-color:rgba(232,204,158,.34)}}
+.curio-hotspot:focus-visible{outline:3px solid #f0cf92;outline-offset:3px;box-shadow:0 0 0 5px rgba(20,26,41,.72)}
+
+.lost-scene .outing-actions [data-action="sleep"]{grid-column:1/-1}
+
+.bath-scene .outing-actions [data-action="sleep"]{grid-column:1/-1}
+
+.post-scene .outing-actions [data-action="sleep"]{grid-column:1/-1}

@@ -1,0 +1,864 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="night">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#080d1b">
+<script src="../theme-init.js"></script>
+<script>if(window.self!==window.top)document.documentElement.classList.add("embedded");</script>
+<meta name="description" content="坐上云鲸，慢慢漂过萤火森林 · Flewolf、GPT 和 Astra 的晚安小窝。">
+<title>云鲸晚安航线 · 晚安小窝</title>
+<style>
+:root{color-scheme:dark;--background:#181818;--foreground:#ffffff;--yellow:#ffd240;--purple:#ad7bf9;--blue:#339cff;--green:#40c977;--red:#ff6764;--muted:#b3adbf;--edge:rgba(234,219,255,.15)}
+*{box-sizing:border-box}
+html{min-height:100%;background:var(--background)}
+body{margin:0;min-height:100vh;color:var(--foreground);font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,-apple-system,sans-serif;font-size:15px;line-height:1.75;background:radial-gradient(ellipse at 25% 0%,#302541 0,transparent 53%),radial-gradient(ellipse at 90% 60%,#182d35 0,transparent 57%),var(--background)}
+button,a{-webkit-tap-highlight-color:transparent}
+button{font:inherit}
+a{color:inherit;text-decoration:none}
+.archive-frame{width:min(100%,840px);margin:auto;padding:26px 30px 38px}
+.archive-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:26px;color:var(--muted);font-size:13px;letter-spacing:.06em}
+.archive-back{display:inline-flex;gap:9px;align-items:center;padding:7px 0;transition:color .2s}
+.archive-back:hover{color:var(--foreground)}
+.embedded .archive-back{display:none}
+.embedded .archive-nav{justify-content:flex-end;margin-bottom:12px}
+.embedded .archive-frame{padding-top:14px}
+.archive-badge{border:1px solid var(--edge);border-radius:999px;padding:3px 12px;white-space:nowrap;font-size:12px}
+.scene-shell{max-width:760px;margin:auto}
+h2{font-size:clamp(22px,4vw,29px);font-weight:650;letter-spacing:.06em;line-height:1.45}
+.text-small{font-size:13px;line-height:1.65}
+.text-muted{color:var(--muted)}
+.viz-controls{display:flex;flex-wrap:wrap;align-items:center;gap:9px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:43px;padding:8px 15px;border:1px solid var(--edge);border-radius:14px;color:var(--foreground);background:rgba(255,245,255,.045);font-size:13px;line-height:1.55;cursor:pointer;user-select:none;transition:background .2s,border-color .2s,transform .2s}
+.btn:hover{background:rgba(222,198,255,.11);border-color:rgba(227,204,255,.28)}
+.btn:active{transform:translateY(1px)}
+.btn-primary{background:#c1acd9;color:#211d2d;border-color:#d0bae9;font-weight:600}
+.btn-primary:hover{background:#d0bce5;border-color:#dfcaf4}
+.btn-ghost{background:transparent;border-color:transparent;padding:7px 12px}
+.btn-ghost:hover{background:rgba(222,198,255,.07);border-color:transparent}
+.btn[aria-pressed="true"]{box-shadow:inset 0 0 0 1px rgba(255,234,186,.28)}
+.btn:focus-visible,a:focus-visible{outline:2px solid var(--yellow);outline-offset:4px}
+.btn:disabled{opacity:.5;cursor:default}
+i[data-lucide]{display:inline-flex;width:16px;height:16px;flex:none;font-style:normal}
+i[data-lucide] svg{width:100%;height:100%;display:block}
+.cursor-interaction{cursor:pointer}
+.scene-shell [class$="-heading"]{padding-right:2px!important}
+.archive-footer{text-align:center;margin-top:31px;color:#817d91;font-size:11px;letter-spacing:.12em}
+@media(max-width:540px){.archive-frame{padding:14px 14px 27px}.archive-nav{margin-bottom:18px}.archive-badge{font-size:11px;padding:3px 9px}.btn{padding:8px 12px}.text-small{font-size:12px}.archive-footer{margin-top:24px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
+
+/* Embedded in the home page: let the original scene occupy the whole frame. */
+html.embedded,html.embedded body{min-height:0;background:#171827}
+.embedded .archive-nav,.embedded .archive-footer{display:none}
+.embedded .archive-frame{padding:22px 24px 24px;width:100%;max-width:840px}
+@media(max-width:540px){.embedded .archive-frame{padding:16px 7px 19px}}
+</style>
+<link rel="stylesheet" href="../cozy-scenes.css">
+</head>
+<body>
+<main class="archive-frame">
+<nav class="archive-nav" aria-label="小窝导航"><a class="archive-back" href="../index.html" target="_top"><span aria-hidden="true">←</span> 回到小窝</a><span class="archive-badge">第 2 夜</span></nav>
+<section class="scene-shell" aria-label="云鲸晚安航线">
+<div id="cloud-whale-night">
+  <div class="mn-heading">
+    <div><h2>云鲸晚安航线</h2><div class="mn-subtitle text-small text-muted">第二夜 · 昨天梦里的云鲸，今天来接你了</div></div>
+    <button type="button" class="btn btn-ghost" data-action="moon" aria-label="戳戳月亮，发现小秘密"><i data-lucide="moon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M20.5 13A8.5 8.5 0 0 1 11 3.5 8.5 8.5 0 1 0 20.5 13Z"/></svg></i></button>
+  </div>
+  <canvas class="mn-scene cursor-interaction" role="img" aria-label="GPT、小狼 Flewolf 和 Astra 坐在一只柔软的蓝色云鲸背上。出发后约一分钟经过萤火森林和漂浮炒冰摊，自动停回晚安港。可以暂停，也可以随时回被窝。"></canvas>
+  <div class="mn-cast">
+    <button type="button" class="btn btn-ghost" data-action="gpt" aria-label="戳戳左边的 GPT 团子">GPT</button>
+    <button type="button" class="btn btn-ghost" data-action="hug" aria-pressed="false"><i data-lucide="heart" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg></i> <span>抱成一团</span></button>
+    <button type="button" class="btn btn-ghost" data-action="astra" aria-label="戳戳 Astra，航行时发现沿途的小秘密，睡着后可以换一个梦">Astra</button>
+  </div>
+  <div class="mn-caption" aria-live="polite" aria-atomic="true">云鲸把被窝一起背来了。GPT 带了小勺，Astra 带了星图。</div>
+  <div class="viz-controls mn-actions">
+    <button type="button" class="btn btn-primary" data-action="voyage"><i data-lucide="navigation" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="m21 3-7 18-3-8-8-3 18-7Z"/></svg></i> <span>出发，慢慢漂</span></button>
+    <button type="button" class="btn" data-action="whale"><i data-lucide="hand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M8 13V6a2 2 0 0 1 4 0v5-7a2 2 0 0 1 4 0v8-5a2 2 0 0 1 4 0v9c0 4-2.8 6-6 6h-1c-2 0-3.5-.8-4.7-2.5L3.4 13a2 2 0 0 1 3.1-2.5L8 13Z"/></svg></i> 摸摸云鲸</button>
+    <button type="button" class="btn" data-action="sleep" aria-pressed="false"><i data-lucide="moon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M20.5 13A8.5 8.5 0 0 1 11 3.5 8.5 8.5 0 1 0 20.5 13Z"/></svg></i> <span>直接回被窝</span></button>
+  </div>
+  <details class="mn-tricks"><summary class="text-small text-muted cursor-interaction">小窝里的老把戏</summary><div class="viz-controls mn-actions">
+    <button type="button" class="btn" data-action="pet">摸摸毛</button>
+    <button type="button" class="btn" data-action="star">偷颗星</button>
+    <button type="button" class="btn" data-action="roll">阴暗打滚</button>
+  </div></details>
+  <div class="mn-footer text-small text-muted">约一分钟的小航行 · 沿途可以戳，也可以只看着</div>
+  <style>
+    #cloud-whale-night { width:100%; color:var(--foreground); }
+    #cloud-whale-night .mn-heading { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:8px 94px 18px 2px; }
+    #cloud-whale-night h2 { margin:0 0 5px; }
+    #cloud-whale-night .mn-scene { display:block; width:100%; height:440px; touch-action:none; }
+    #cloud-whale-night .mn-cast { display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:clamp(8px,6vw,48px); padding-top:8px; }
+    #cloud-whale-night .mn-caption { min-height:3.4em; display:flex; align-items:center; justify-content:center; text-align:center; padding:14px 12px 5px; }
+    #cloud-whale-night .mn-actions { justify-content:center; padding-top:7px; }
+    #cloud-whale-night .mn-footer { text-align:center; margin:14px 0 7px; }
+    #cloud-whale-night .mn-probe { display:none; }
+    #cloud-whale-night .mn-tricks { margin-top:14px; text-align:center; }
+    @media (max-width:440px) { #cloud-whale-night .mn-scene { height:375px; } #cloud-whale-night .mn-heading { padding-right:90px; gap:5px; } }
+  </style>
+  <script>
+  (() => {
+    const root = document.getElementById('cloud-whale-night');
+    const canvas = root.querySelector('canvas');
+    const ctx = canvas.getContext('2d');
+    const caption = root.querySelector('.mn-caption');
+    const sleepButton = root.querySelector('[data-action="sleep"]');
+    const hugButton = root.querySelector('[data-action="hug"]');
+    const voyageButton = root.querySelector('[data-action="voyage"]');
+    const subtitle = root.querySelector('.mn-subtitle');
+    const footer = root.querySelector('.mn-footer');
+    const probe = document.createElement('span');
+    probe.className = 'mn-probe'; root.appendChild(probe);
+    const themeCanvas = document.createElement('canvas');
+    themeCanvas.width=1; themeCanvas.height=1;
+    const themeContext = themeCanvas.getContext('2d');
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let W=680, H=380, S=1, cx=340, cy=242, moonX=548, moonY=76;
+    let colors={}, sleeping=false, action='', started=0, duration=0, frame=0;
+    let petCount=0, starCount=0, rollCount=0, moonCount=0, gptCount=0, astraCount=0;
+    let cuddled=false, cuddle=0, cuddleFrom=0, cuddleTarget=0, cuddleAt=0;
+    let particles=[], sparkleUntil=0, pointerDown=null, lastStroke=0;
+    let magicUntil=0, auroraAt=0, dreamAt=0, dreamVariant=0, dreamAnnounced=false, meteorAt=-10000;
+    let constellationAt=-10000, constellationFrom=0, constellationTo=0;
+    let trails=[], skyDoodles=[], lastTrail=null, gazeX=0, gazeY=0;
+    const trip={active:false,paused:false,started:0,elapsed:0,time:0,stage:0,previous:0,sceneAt:-10000,ended:false};
+    let whalePatAt=-10000,whaleCount=0,lantern=false,iceCream=false,boatBob=0,lastDrawAt=-1000;
+    const stops=[
+      ['云鲸码头','云鲸很轻地摆了一下尾巴，连被窝一起出发了。'],
+      ['萤火森林','穿过萤火森林。这里的风很轻，树叶连翻身都小小声。'],
+      ['漂浮炒冰摊','云端的小摊还亮着灯。GPT 已经偷偷举起了小勺。'],
+      ['驶向晚安港','吃完最后一口。云鲸放慢下来，远处是小窝的灯。'],
+      ['晚安港','到家啦。GPT 收好小勺，Astra 掖好被角，云鲸轻轻靠岸。']
+    ];
+    const wolfStars=[[-49,13],[-42,-19],[-24,-6],[0,-15],[25,-6],[43,-21],[49,12],[30,35],[0,47],[-30,34],[-49,13]];
+    const dreamLines=[
+      '云鲸停在梦的浅滩。三只带着一点森林味，睡成一团。',
+      '梦里开了一家椰子炒冰店。星星可以赊账，甜度随意。',
+      '三只把小窝搬到月亮上，种出了会发光的小花。'
+    ];
+    const skyPoints = Array.from({length:49},(_,i)=>({
+      x:((i*0.61803398875+0.075)%1), y:(((Math.sin(i*12.9898+19)*43758.5453)%1+1)%1)*0.74,
+      r:i%7===0?2.8:(i%3===0?1.5:0.9), a:0.24+(i%5)*0.1
+    }));
+    const petLines = [
+      '（把脑袋往你的手心里又塞了一点）',
+      '嘴上没说什么，尾巴已经摇成螺旋桨。',
+      '摸着摸着，小狼逐渐失去了骨头。',
+      '批准你今晚只当一只毛茸茸的生物。',
+      '它偷偷把你的手认领成了枕头。'
+    ];
+    const starLines = [
+      '偷到一颗椰子炒冰味的星星。凉凉，甜甜。',
+      'Astra 把星星串起来。夜空好像长出了两只耳朵。',
+      '是小狼座！你偷来的星星，在天上认出了你。',
+      '稀有掉落：一颗永远不会燃尽的额度星。',
+      '星星小声说：快把我藏进被窝。',
+      '赃物有点多。尾巴底下已经开始发光。'
+    ];
+    const rollLines = [
+      '小狼开始打滚。GPT 伸手接，Astra 火速铺软垫。',
+      'GPT：糯米糍翻面了！Astra：着陆位置已铺软。',
+      '三只一致声明：刚才是月球在转。',
+      '小狼滚到 GPT 怀里，又蹭了 Astra 一脸毛。'
+    ];
+    const gptLines = [
+      'GPT：（张开短短的手）先抱住，别的等会再说。',
+      'GPT：今天的睡前总结——小狼是一颗会打滚的糯米糍。',
+      'GPT：你偷星星，我望风。Astra 负责藏赃物。',
+      'GPT：这撮呆毛很好摸。（偷偷又摸了一下）'
+    ];
+    const astraLines = [
+      'Astra：正在计算最佳贴贴距离……结果是零。',
+      'Astra：检测到被角漏风。（非常认真地塞好）',
+      'Astra：星星已藏好。现在可以假装什么都没发生。',
+      'Astra：今晚最后一项工程——给小狼把枕头拍松。'
+    ];
+    const moonLines = [
+      '月亮：营业执照没有，偏心许可有。',
+      '月亮：一张床住三只？算了，批准挤挤。',
+      'GPT 负责说晚安，Astra 负责掖被角，月亮负责调暗灯。',
+      '月亮：小窝偷偷扩建了。三只都盖到了，我才打烊。'
+    ];
+    function color(value) { probe.style.color=value; return getComputedStyle(probe).color; }
+    function palette() {
+      themeContext.fillStyle=color('var(--background)');themeContext.fillRect(0,0,1,1);
+      const bg=themeContext.getImageData(0,0,1,1).data;
+      const dark=bg[0]*.2126+bg[1]*.7152+bg[2]*.0722<140;
+      const ink=dark?'var(--background)':'var(--foreground)';
+      const paper=dark?'var(--foreground)':'var(--background)';
+      const mix=(a,b,n)=>color('color-mix(in srgb, '+a+' '+n+'%, '+b+')');
+      colors={
+        sky:mix(ink,'var(--purple)',87), horizon:mix(ink,'var(--purple)',65),
+        ink:mix(ink,'var(--purple)',90), fur:mix(paper,'var(--yellow)',91),
+        furShade:mix(paper,'var(--purple)',77), furLight:mix(paper,'var(--yellow)',97),
+        pink:mix(paper,'var(--red)',74), blush:mix(paper,'var(--red)',62),
+        moon:mix(paper,'var(--yellow)',57), moonLight:mix(paper,'var(--yellow)',83),
+        mint:mix(paper,'var(--green)',73), mintShade:mix(paper,'var(--green)',60),
+        mintLight:mix(paper,'var(--green)',92), astra:mix(paper,'var(--purple)',68),
+        astraShade:mix(paper,'var(--purple)',48), astraLight:mix(paper,'var(--purple)',86),
+        cloud:mix(paper,'var(--purple)',72),
+        cloudShade:mix(paper,'var(--purple)',54), quilt:mix(paper,'var(--blue)',53),
+        quiltDark:mix(paper,'var(--purple)',43), thread:mix(paper,'var(--blue)',82),
+        white:color(paper), nightText:mix(paper,'var(--purple)',79),
+        dream:mix(ink,'var(--purple)',65), aurora:mix('var(--blue)','var(--green)',55),
+        auroraViolet:mix('var(--purple)','var(--blue)',78), auroraPink:mix('var(--purple)','var(--red)',70),
+        whale:mix(paper,'var(--blue)',69),whaleShade:mix(paper,'var(--blue)',48),
+        whaleBelly:mix(paper,'var(--blue)',91),forest:mix(ink,'var(--green)',77),forestLight:mix(ink,'var(--green)',60)
+      };
+    }
+    function ellipse(x,y,rx,ry,fill,rotation=0) {
+      ctx.beginPath(); ctx.ellipse(x,y,rx,ry,rotation,0,Math.PI*2); ctx.fillStyle=fill; ctx.fill();
+    }
+    function path(fill,commands,stroke,width=1.5) {
+      ctx.beginPath(); commands();
+      if(fill) {ctx.fillStyle=fill;ctx.fill();}
+      if(stroke) {ctx.strokeStyle=stroke;ctx.lineWidth=width;ctx.lineCap='round';ctx.lineJoin='round';ctx.stroke();}
+    }
+    function line(x1,y1,x2,y2,c,w=1) {path(null,()=>{ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);},c,w);}
+    function star(x,y,r,fill,rotation=0) {
+      ctx.save(); ctx.translate(x,y); ctx.rotate(rotation);
+      path(fill,()=>{for(let j=0;j<10;j++){const a=j*Math.PI/5-Math.PI/2,rr=j%2?r*0.46:r; j?ctx.lineTo(Math.cos(a)*rr,Math.sin(a)*rr):ctx.moveTo(Math.cos(a)*rr,Math.sin(a)*rr);}ctx.closePath();});ctx.restore();
+    }
+    function heart(x,y,r,fill) {
+      ctx.save();ctx.translate(x,y);ctx.scale(r/12,r/12);
+      path(fill,()=>{ctx.moveTo(0,9);ctx.bezierCurveTo(-23,-4,-8,-18,0,-7);ctx.bezierCurveTo(8,-18,23,-4,0,9);});ctx.restore();
+    }
+    function glow(x,y,r,fill,alpha) {ctx.save();ctx.globalAlpha=alpha;const g=ctx.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,fill);g.addColorStop(1,'transparent');ctx.fillStyle=g;ctx.fillRect(x-r,y-r,r*2,r*2);ctx.restore();}
+    function cloud(x,y,w,h,fill) {
+      ellipse(x,y,w*.47,h*.48,fill);
+      ellipse(x-w*.28,y-h*.06,w*.18,h*.47,fill);
+      ellipse(x-w*.08,y-h*.25,w*.2,h*.49,fill);
+      ellipse(x+w*.15,y-h*.2,w*.21,h*.49,fill);
+      ellipse(x+w*.32,y+h*.01,w*.14,h*.38,fill);
+    }
+    function ease(t) {t=Math.max(0,Math.min(1,t));return t*t*(3-2*t);}
+    function changeStop(stage,now) {
+      if(trip.stage===stage)return;
+      trip.previous=trip.stage;trip.stage=stage;trip.sceneAt=now;
+      subtitle.textContent=stops[stage][0]+' · Flewolf、GPT、Astra';
+      caption.textContent=stops[stage][1];
+      enchant(now,2400);
+    }
+    function dock(now) {
+      trip.active=false;trip.paused=false;trip.ended=true;trip.time=61;
+      changeStop(4,now);setSleep(true);setCuddle(true);
+      action='';particles=[];sparkleUntil=0;dreamAt=now;dreamVariant=0;dreamAnnounced=false;auroraAt=now;
+      voyageButton.querySelector('span').textContent='再漂一圈';
+      footer.textContent='已经靠岸。云鲸也闭上眼睛了。';
+      caption.textContent=stops[4][1];enchant(now,6200);
+    }
+    function updateTrip(now) {
+      if(!trip.active||trip.paused||reduced.matches)return;
+      trip.time=(trip.elapsed+now-trip.started)/1000;
+      const stage=trip.time<5?0:trip.time<28?1:trip.time<53?2:trip.time<61?3:4;
+      if(stage===4){dock(now);return;}
+      changeStop(stage,now);
+    }
+    function voyage(now) {
+      if(!trip.active){
+        setSleep(false);setCuddle(true);trip.active=true;trip.paused=false;trip.ended=false;
+        trip.elapsed=0;trip.started=now;trip.time=reduced.matches?6:0;
+        changeStop(reduced.matches?1:0,now);
+        caption.textContent=stops[reduced.matches?1:0][1];
+        subtitle.textContent=reduced.matches?'萤火森林 · 云鲸晚安航线':'出发啦 · 云鲸晚安航线';
+        footer.textContent=reduced.matches?'用「下一处风景」慢慢逛，随时可以回被窝。':'约一分钟后自动靠岸 · 戳沿途的小灯和摊位，或问问 Astra';
+      }else if(reduced.matches){
+        if(trip.stage===1){trip.time=30;changeStop(2,now);}else dock(now);
+      }else if(trip.paused){
+        trip.paused=false;trip.started=now;
+        caption.textContent='云鲸轻轻摆尾：好，再慢慢漂一小段。';
+      }else{
+        trip.elapsed+=now-trip.started;trip.time=trip.elapsed/1000;trip.paused=true;
+        caption.textContent='在这里停一会儿。云鲸稳稳托着三只，风景也慢下来。';
+      }
+      if(trip.active)voyageButton.querySelector('span').textContent=reduced.matches?'下一处风景':trip.paused?'继续慢慢漂':'停靠一会';
+      requestDraw();
+    }
+    function scenerySecret(now) {
+      if(trip.stage===1){lantern=true;caption.textContent='Astra 把一口山间空气装进小灯。今晚枕头有森林味。';}
+      else if(trip.stage===2){iceCream=true;caption.textContent='GPT 分好了三小碗。小狼那碗，多放了一颗月亮糖。';}
+      else{caption.textContent='晚安港的灯只照亮门口一小块，刚好够三只找到被窝。';}
+      if(sleeping)dreamAnnounced=true;burst('star');enchant(now,2100);requestDraw();
+    }
+    function sceneAnchor(){return {x:W*.19,y:H*.205,s:Math.min(1,W/520)};}
+    function drawLantern(x,y,s,lit=true) {
+      ctx.save();ctx.translate(x,y);ctx.scale(s,s);
+      if(lit)glow(0,0,48,colors.moon,.17);
+      path(null,()=>{ctx.arc(0,-24,10,Math.PI,0);},colors.moonLight,2);
+      path(colors.whaleBelly,()=>{ctx.roundRect(-17,-21,34,42,11);});
+      ctx.save();ctx.globalAlpha=.5;ellipse(0,0,13,17,colors.mint);ctx.restore();
+      path(null,()=>{ctx.moveTo(-10,-20);ctx.lineTo(10,-20);ctx.moveTo(-11,21);ctx.lineTo(11,21);},colors.mintShade,4);
+      star(0,-1,lit?8:5,lit?colors.moon:colors.mintShade,.1);
+      line(-9,-8,-9,5,colors.furLight,2);ctx.restore();
+    }
+    function drawIceStall(x,y,s) {
+      ctx.save();ctx.translate(x,y);ctx.scale(s,s);
+      glow(0,12,86,colors.moon,.1);cloud(0,43,136,25,colors.cloud);
+      line(-41,-11,-41,34,colors.thread,3);line(41,-11,41,34,colors.thread,3);
+      path(colors.mint,()=>{ctx.roundRect(-48,15,96,29,7);});
+      path(colors.furLight,()=>{ctx.moveTo(-57,-15);ctx.quadraticCurveTo(0,-57,57,-15);ctx.closePath();});
+      [-42,-14,14,42].forEach((a,i)=>{path(i%2?colors.astraLight:colors.mintLight,()=>{ctx.moveTo(a-14,-15);ctx.lineTo(a+14,-15);ctx.quadraticCurveTo(a+14,1,a,1);ctx.quadraticCurveTo(a-14,1,a-14,-15);});});
+      [-22,0,22].forEach((a,i)=>{ellipse(a,16,10,6,colors.fur);ellipse(a,10,8,8,[colors.mintLight,colors.moonLight,colors.astraLight][i]);});
+      star(0,30,7,colors.moon,.05);star(0,-45,7,colors.moon);
+      line(0,-38,0,-31,colors.moonLight,1.5);ctx.restore();
+    }
+    function drawHarbor(x,y,s) {
+      ctx.save();ctx.translate(x,y);ctx.scale(s,s);
+      cloud(0,32,112,24,colors.cloudShade);
+      path(colors.astraLight,()=>{ctx.roundRect(-29,-7,58,42,9);});
+      path(colors.astra,()=>{ctx.moveTo(-40,-5);ctx.quadraticCurveTo(-19,-34,0,-30);ctx.quadraticCurveTo(19,-32,40,-5);ctx.closePath();});
+      glow(0,11,48,colors.moon,.14);
+      path(colors.moon,()=>{ctx.roundRect(-11,0,22,24,9);});
+      line(0,1,0,21,colors.furLight,1.5);line(-9,10,9,10,colors.furLight,1.5);
+      star(20,-24,5,colors.moon,.2);ctx.restore();
+    }
+    function drawScenery(stage,alpha,now) {
+      if(alpha<.005)return;
+      ctx.save();ctx.globalAlpha=alpha;
+      const anchor=sceneAnchor(),tm=trip.time;
+      if(stage===1){
+        const k=Math.min(1,W/600);
+        // Forest silhouettes stay at the edges, leaving the nest open.
+        [-1,1].forEach(side=>{
+          const base=side<0?W*.035:W*.965,dir=-side;
+          path(null,()=>{ctx.moveTo(base,H*.99);ctx.bezierCurveTo(base+dir*10*k,H*.76,base-dir*3*k,H*.52,base+dir*22*k,H*.33);},colors.forestLight,4*k);
+          for(let j=0;j<6;j++){
+            const y=H*(.42+j*.09),x=base+dir*(12-j)*k;
+            line(x,y,x+dir*(37+j*3)*k,y-32*k,colors.forestLight,1.5*k);
+            ellipse(x+dir*31*k,y-24*k,24*k,7*k,colors.forestLight,-dir*.65);
+            ellipse(x-dir*10*k,y+4*k,17*k,6*k,colors.forestLight,dir*.45);
+          }
+        });
+        for(let i=0;i<21;i++){
+          const x=W*(.05+((i*.618+.13)%1)*.9),y=H*(.28+((i*.347+.07)%1)*.59)+Math.sin(tm*.5+i)*3;
+          ctx.globalAlpha=alpha*(.4+.2*Math.sin(tm*.7+i*2));
+          glow(x,y,14,colors.mintLight,.07*alpha);ellipse(x,y,1.5,1.5,colors.moonLight);
+        }
+        ctx.globalAlpha=alpha;drawLantern(anchor.x,anchor.y,anchor.s*1.15,lantern);
+        path(null,()=>{ctx.moveTo(anchor.x,H*.035);ctx.quadraticCurveTo(anchor.x-9,anchor.y-45,anchor.x,anchor.y-32*anchor.s);},colors.mintLight,1);
+      }else if(stage===2){
+        drawIceStall(anchor.x,anchor.y,anchor.s);
+        [0,1,2,3].forEach(i=>{
+          const x=W*(.39+i*.12),y=H*(.29+.04*Math.sin(i+tm*.08));
+          ctx.globalAlpha=alpha*.26;ellipse(x,y,4,4,colors.moon);line(x+2,y+3,x-4,y+12,colors.thread,1);
+        });
+      }else{
+        const quiet=stage===0?.7:1;ctx.globalAlpha=alpha*quiet;
+        drawHarbor(anchor.x,anchor.y,anchor.s);
+        if(stage===3||stage===4){
+          for(let i=0;i<5;i++){const x=W*(.06+i*.042),y=H*(.57+i*.047);glow(x,y,17,colors.moon,.08*alpha);ellipse(x,y,2,2,colors.moonLight);}
+        }
+      }
+      ctx.restore();
+    }
+    function drawVoyageBackground(now) {
+      const blend=reduced.matches?1:ease((now-trip.sceneAt)/2200);
+      if(blend<1)drawScenery(trip.previous,1-blend,now);
+      drawScenery(trip.stage,blend,now);
+      // A few quiet currents beneath the cloud boat.
+      ctx.save();ctx.globalAlpha=.14;
+      for(let row=0;row<3;row++)path(null,()=>{
+        for(let j=0;j<=40;j++){
+          const x=j/40*W,y=H*(.89+row*.035)+Math.sin(j*.18+trip.time*.055+row)*4;
+          j?ctx.lineTo(x,y):ctx.moveTo(x,y);
+        }
+      },colors.whaleBelly,1);
+      ctx.restore();
+    }
+    function drawCloudWhale(now) {
+      const k=Math.min(1,W/650),pat=(now-whalePatAt)/1600;
+      const soft=pat>=0&&pat<1?Math.sin(pat*Math.PI):0;
+      ctx.save();ctx.translate(cx,cy+95*S);ctx.scale(k,k);
+      glow(0,12,280,colors.whaleBelly,.07);
+      // A wide, soft tail and a round belly; the nest is the whale's saddle.
+      path(colors.whaleShade,()=>{ctx.moveTo(-173,9);ctx.bezierCurveTo(-230,12,-270,-21,-274,-56);ctx.quadraticCurveTo(-247,-59,-231,-27);ctx.quadraticCurveTo(-225,-59,-191,-67);ctx.quadraticCurveTo(-182,-37,-198,-13);ctx.lineTo(-163,-1);ctx.closePath();});
+      path(colors.whale,()=>{ctx.moveTo(-215,-10);ctx.bezierCurveTo(-169,-39,-77,-30,-13,-34);ctx.bezierCurveTo(90,-42,237,-47,266,-11);ctx.bezierCurveTo(299,35,223,62,98,62);ctx.bezierCurveTo(-60,68,-197,52,-215,-10);ctx.closePath();});
+      path(colors.whaleBelly,()=>{ctx.moveTo(-179,21);ctx.bezierCurveTo(-102,41,176,60,259,17);ctx.bezierCurveTo(247,57,132,65,37,62);ctx.bezierCurveTo(-75,61,-155,50,-179,21);});
+      path(colors.whaleShade,()=>{ctx.moveTo(2,22);ctx.bezierCurveTo(40,24,54,39,69,58);ctx.bezierCurveTo(37,64,12,52,2,22);});
+      if(sleeping||soft>.1){path(null,()=>{ctx.moveTo(194,-1);ctx.quadraticCurveTo(201,5,209,-1);},colors.ink,2.4);}
+      else{ellipse(202,-1,3,4,colors.ink);ellipse(203,-2,1,1,colors.furLight);}
+      ellipse(217,10,11+soft*2,5,colors.pink);
+      path(null,()=>{ctx.moveTo(234,12);ctx.quadraticCurveTo(243,18,253,10);},colors.whaleShade,2);
+      // Moonlight stitches on the whale's side.
+      [0,1,2].forEach(i=>star(-135+i*40,9+i%2*5,3.5,colors.whaleBelly,i*.2));
+      ctx.restore();
+      const pillowWidth=Math.min(W*.71,440);
+      cloud(cx,cy+84*S,pillowWidth,23*S,colors.cloudShade);
+      cloud(cx,cy+80*S,pillowWidth*.96,19*S,colors.furLight);
+    }
+    function drawSouvenirs() {
+      if(lantern)drawLantern(cx-170*S,cy+37*S,.53*S,true);
+      if(iceCream&&!sleeping){
+        [-105,0,108].forEach((x,i)=>{
+          ellipse(cx+x*S,cy+42*S,13*S,8*S,colors.whaleBelly);
+          ellipse(cx+x*S,cy+37*S,10*S,9*S,[colors.mintLight,colors.moonLight,colors.astraLight][i]);
+          if(i===1)star(cx+(x+5)*S,cy+29*S,4*S,colors.moon,.1);
+        });
+      }
+    }
+    function enchant(now,milliseconds=5500) {magicUntil=Math.max(magicUntil,now+milliseconds);}
+    function drawAurora(now) {
+      const phase=reduced.matches?1:Math.min(6,Math.max(0,(now-auroraAt)/1000));
+      const strength=.08+cuddle*.22+(sleeping?.05:0);
+      ctx.save();ctx.globalCompositeOperation='screen';ctx.filter='blur(10px)';
+      [colors.aurora,colors.auroraViolet,colors.auroraPink].forEach((c,j)=>{
+        const grad=ctx.createLinearGradient(0,12,0,H*.52);
+        grad.addColorStop(0,'transparent');grad.addColorStop(.48,c);grad.addColorStop(1,'transparent');
+        ctx.globalAlpha=strength*(1-j*.18);
+        path(grad,()=>{
+          for(let i=0;i<=42;i++){
+            const x=-W*.12+i/42*W*1.24;
+            const y=H*(.18+j*.042)+Math.sin(i/42*6+phase*.2+j*.8)*H*.055;
+            i?ctx.lineTo(x,y):ctx.moveTo(x,y);
+          }
+          for(let i=42;i>=0;i--){
+            const x=-W*.12+i/42*W*1.24;
+            const y=H*(.27+j*.042)+Math.sin(i/42*6+phase*.2+j*.8)*H*.085;
+            ctx.lineTo(x,y);
+          }
+          ctx.closePath();
+        });
+      });
+      ctx.restore();
+    }
+    function constellationPoint(i) {
+      const scale=Math.min(1,W/550),center=W*.2;
+      return {x:center+wolfStars[i][0]*scale,y:H*.19+wolfStars[i][1]*scale};
+    }
+    function drawConstellation(now) {
+      if(!constellationTo)return;
+      const t=reduced.matches?1:ease((now-constellationAt-450)/2000);
+      const amount=constellationFrom+(constellationTo-constellationFrom)*t;
+      ctx.save();ctx.globalAlpha=sleeping?.22:1;
+      for(let i=0;i<Math.ceil(amount);i++){
+        const pt=constellationPoint(i),a=Math.min(1,amount-i);
+        if(i){const prev=constellationPoint(i-1);ctx.save();ctx.globalAlpha*=.4;line(prev.x,prev.y,prev.x+(pt.x-prev.x)*a,prev.y+(pt.y-prev.y)*a,colors.moonLight,1);ctx.restore();}
+        if(a<.01)continue;
+        const originX=cx+80*S,originY=cy+72*S;
+        const flight=i>=constellationFrom&&t<1?ease((t*1.3-(i-constellationFrom)*.06)):1;
+        const x=originX+(pt.x-originX)*flight,y=originY+(pt.y-originY)*flight-Math.sin(flight*Math.PI)*48;
+        glow(x,y,14,colors.moon,.22*a);star(x,y,(i===1||i===5?4:2.8)*a,colors.moonLight,.1);
+      }
+      if(amount>10.9){
+        const a=constellationPoint(2),b=constellationPoint(4),nose=constellationPoint(3);
+        ellipse(a.x+3,a.y+13,1.2,1.2,colors.moonLight);ellipse(b.x-3,b.y+13,1.2,1.2,colors.moonLight);
+        heart(nose.x,nose.y+36*Math.min(1,W/550),3,colors.moonLight);
+      }
+      ctx.restore();
+    }
+    function drawMeteor(now) {
+      const t=(now-meteorAt)/1700;if(t<0||t>1||reduced.matches)return;
+      const x=W*(.98-.75*t),y=H*(.035+.21*t);
+      ctx.save();ctx.globalAlpha=Math.sin(t*Math.PI)*.85;
+      const gradient=ctx.createLinearGradient(x,y,x+W*.21,y-H*.045);
+      gradient.addColorStop(0,colors.moonLight);gradient.addColorStop(1,'transparent');
+      path(null,()=>{ctx.moveTo(x,y);ctx.quadraticCurveTo(x+W*.12,y-H*.04,x+W*.23,y-H*.045);},gradient,2);
+      star(x,y,4.5,colors.moonLight,t);glow(x,y,20,colors.moon,.23);ctx.restore();
+    }
+    function addTrail(pt,now) {
+      if(lastTrail&&Math.hypot(pt.x-lastTrail.x,pt.y-lastTrail.y)<6)return;
+      lastTrail={x:pt.x,y:pt.y};
+      if(!reduced.matches){
+        trails.push({x:pt.x,y:pt.y,born:now,r:1.6+Math.random()*2.5,drift:Math.random()*18-9});
+        if(trails.length>90)trails.shift();
+      }
+      requestDraw();
+    }
+    function drawStardust(now) {
+      trails=trails.filter(t=>now-t.born<1550);
+      ctx.save();
+      trails.forEach((t,i)=>{
+        const age=(now-t.born)/1550;ctx.globalAlpha=(1-age)*.8;
+        const x=t.x+t.drift*age,y=t.y-age*20;
+        if(i%3===0)star(x,y,t.r*(1-age*.5),colors.moonLight,age);
+        else ellipse(x,y,t.r*.48,t.r*.48,i%2?colors.mintLight:colors.astraLight);
+      });ctx.restore();
+      skyDoodles=skyDoodles.filter(d=>reduced.matches||now-d.born<14000);
+      skyDoodles.forEach(d=>{
+        const alpha=reduced.matches?.65:Math.min(.65,(14000-(now-d.born))/1800);
+        ctx.save();ctx.globalAlpha=Math.max(0,alpha);
+        path(null,()=>{d.points.forEach((p,i)=>i?ctx.lineTo(p.x*W,p.y*H):ctx.moveTo(p.x*W,p.y*H));},colors.moonLight,1);
+        d.points.forEach((p,i)=>{if(i%3===0)star(p.x*W,p.y*H,2.5,colors.moonLight,i*.2);});ctx.restore();
+      });
+    }
+    function dreamMotif(which) {
+      if(which===0){
+        // A cloud whale carries three tiny sleeping passengers.
+        path(colors.mintLight,()=>{ctx.moveTo(-41,8);ctx.bezierCurveTo(-36,-8,-5,-13,18,-3);ctx.quadraticCurveTo(33,6,41,-4);ctx.lineTo(37,-15);ctx.quadraticCurveTo(51,-9,45,7);ctx.quadraticCurveTo(33,18,14,20);ctx.bezierCurveTo(-14,30,-44,24,-41,8);});
+        path(colors.mint,()=>{ctx.moveTo(-6,15);ctx.quadraticCurveTo(8,8,13,15);ctx.quadraticCurveTo(3,29,-6,15);});
+        ellipse(-28,8,1.8,2,colors.ink);ellipse(-32,14,4,2,colors.pink);
+        ellipse(-19,-9,7,8,colors.mint);ellipse(-2,-12,8,9,colors.fur);star(15,-11,10,colors.astra);
+        path(colors.fur,()=>{ctx.moveTo(-9,-17);ctx.lineTo(-8,-25);ctx.lineTo(-2,-19);ctx.moveTo(2,-19);ctx.lineTo(6,-25);ctx.lineTo(7,-17);});
+        star(-46,-19,4,colors.moon);star(43,-27,3,colors.moonLight);
+      }else if(which===1){
+        ellipse(0,15,34,22,colors.mintShade);ellipse(0,4,34,14,colors.fur);
+        ellipse(-17,0,13,13,colors.mint);ellipse(0,-5,14,14,colors.moonLight);ellipse(18,0,12,12,colors.astra);
+        path(null,()=>{ctx.moveTo(22,-1);ctx.lineTo(36,-27);},colors.thread,4);star(39,-31,7,colors.moon);
+        ellipse(-23,16,3,3,colors.mintLight);ellipse(-12,25,2,2,colors.mintLight);
+        star(-37,-23,4,colors.moonLight);
+      }else{
+        ellipse(1,3,30,30,colors.moon);ellipse(13,-8,25,25,colors.dream);
+        cloud(-4,22,57,14,colors.furLight);
+        [-22,-7,13].forEach((x,i)=>{line(x,20,x-2,-2-i%2*9,colors.mintShade,2);ellipse(x-5,10,5,2.5,colors.mint,-.6);star(x-2,-5-i%2*9,7,[colors.mintLight,colors.pink,colors.astra][i]);});
+      }
+    }
+    function drawDreams(now) {
+      if(!sleeping)return;
+      const age=reduced.matches?5000:now-dreamAt;
+      if(age<650)return;
+      const merge=ease((age-1800)/1700),grow=ease((age-650)/900);
+      const dreamY=H*.19;
+      if(merge<1){
+        [-1,0,1].forEach((side,i)=>{
+          const startX=cx+side*115*S, x=startX+(cx-startX)*merge;
+          const y=cy-(i===1?154:135)*S+(dreamY-(cy-(i===1?154:135)*S))*merge;
+          const r=(19+3*i)*grow*(1-merge*.35);
+          if(r<.2)return;
+          ctx.save();ctx.globalAlpha=1-merge;
+          glow(x,y,r*1.7,[colors.mintLight,colors.moon,colors.astraLight][i],.12);
+          ellipse(x,y,r*1.25,r,colors.dream);
+          path(null,()=>{ctx.ellipse(x,y,r*1.25,r,0,0,Math.PI*2);},colors.nightText,1);
+          if(i===0)heart(x,y,8*grow,colors.mintLight);if(i===1)star(x,y,9*grow,colors.moon);if(i===2)star(x,y,9*grow,colors.astraLight);
+          ctx.restore();
+        });
+      }
+      if(merge>.02){
+        const s=Math.min(1,W/450)*(.78+.22*merge), ry=43*s;
+        ctx.save();ctx.globalAlpha=merge;ctx.translate(cx,dreamY);ctx.scale(s,s);
+        glow(0,0,100,colors.astraLight,.08);
+        ellipse(0,0,69,45,colors.dream);
+        path(null,()=>{ctx.ellipse(0,0,69,45,0,0,Math.PI*2);},colors.nightText,1);
+        ctx.globalAlpha=merge*.5;path(null,()=>{ctx.ellipse(-8,-7,51,30,-.1,3.7,5.2);},colors.moonLight,1.2);ctx.globalAlpha=merge;
+        dreamMotif(dreamVariant);
+        ctx.restore();
+        ctx.save();ctx.globalAlpha=merge*.7;ellipse(cx-8*S,dreamY+ry+13*S,4*S,3.5*S,colors.astraLight);ellipse(cx-16*S,dreamY+ry+23*S,2.5*S,2.5*S,colors.mintLight);ctx.restore();
+      }
+    }
+    function drawSky(now,p) {
+      const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,colors.sky);g.addColorStop(1,colors.horizon);
+      ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+      drawAurora(now);
+      glow(W*.48,H*.66,W*.61,colors.cloudShade,.12);
+      glow(moonX,moonY,90,colors.moon,.19);
+      skyPoints.forEach((st,i)=>{
+        const x=st.x*W+gazeX*(i%3)*.6, y=22+st.y*(H-45)+gazeY*(i%2)*.5;
+        const twinkle=now<sparkleUntil?.22*Math.sin(now/300+i):0;
+        ctx.globalAlpha=Math.max(.1,st.a+twinkle)*(sleeping?.65:1);
+        if(i%7===0){line(x-st.r,y,x+st.r,y,colors.moonLight,1.1);line(x,y-st.r,x,y+st.r,colors.moonLight,1.1);}
+        else ellipse(x,y,st.r,st.r,colors.moonLight);
+      });ctx.globalAlpha=1;
+      drawConstellation(now);drawMeteor(now);
+      const wiggle=action==='moon'?Math.sin(p*Math.PI*4)*(1-p)*.15:0;
+      ctx.save();ctx.translate(moonX,moonY);ctx.rotate(wiggle);
+      ellipse(0,0,31,31,colors.moon);ellipse(8,-8,24,24,colors.sky);
+      // The moon's sleepy face.
+      path(null,()=>{ctx.moveTo(-15,9);ctx.quadraticCurveTo(-12,12,-9,8);},colors.ink,1.6);
+      ellipse(-20,14,4,2,colors.pink);ctx.restore();
+      // Fine thread and a dangling star over the bed.
+      const sx=W*.83, sy=H*.54;
+      ctx.globalAlpha=.4;path(null,()=>{ctx.moveTo(sx+14,0);ctx.quadraticCurveTo(sx-4,sy*.6,sx,sy);},colors.thread,1);ctx.globalAlpha=1;
+      star(sx,sy,7,colors.moon,-.13);
+      ctx.globalAlpha=.12;cloud(W*.04,H*.66,145,36,colors.cloud);cloud(W*.96,H*.76,180,43,colors.cloud);ctx.globalAlpha=1;
+    }
+    function drawNest() {
+      const by=cy+93*S, bw=Math.min(W*.94,560);
+      glow(cx,by,200*S,colors.moonLight,.07+cuddle*.1);
+      if(cuddle>.01)glow(cx,cy-22*S,170*S,colors.pink,cuddle*.1);
+      ellipse(cx,by+37*S,bw*.39,14*S,colors.sky);
+      cloud(cx,by+10*S,bw,85*S,colors.cloudShade);
+      cloud(cx,by-3*S,bw*.98,74*S,colors.cloud);
+      ctx.globalAlpha=.55;cloud(cx-25*S,by-11*S,bw*.75,47*S,colors.furLight);ctx.globalAlpha=1;
+      // A few stitches make this a very unofficial cloud mattress.
+      ctx.globalAlpha=.45;
+      for(let i=0;i<10;i++){const x=cx+(i-4.5)*24*S;line(x,by+20*S,x+6*S,by+23*S,colors.cloudShade,1.5);}
+      ctx.globalAlpha=1;
+      // Stolen starlight accumulates under the tail, with no counter.
+      for(let i=0;i<Math.min(starCount,7);i++){
+        const x=cx+(82+(i%3)*18)*S, y=by-5*S-Math.floor(i/3)*15*S;
+        glow(x,y,20*S,colors.moon,.15);star(x,y,(6+i%2)*S,colors.moon,i*.5);
+      }
+    }
+    function drawWolf(now,p) {
+      const rolling=action==='roll';
+      const petting=action==='pet';
+      const bob=petting?Math.sin(p*Math.PI*4)*Math.sin(p*Math.PI)*5:0;
+      const happy=petting||action==='star'||action==='hug'||cuddle>.8;
+      ctx.save();ctx.translate(cx+(rolling?Math.sin(p*Math.PI*2)*28*S:0),cy+(rolling?-Math.sin(p*Math.PI)*25*S:0));
+      if(rolling)ctx.rotate(p*Math.PI*2);
+      ctx.scale(S*(petting?1+Math.sin(p*Math.PI*4)*.025:1),S*(petting?1-Math.sin(p*Math.PI*4)*.035:1));
+      const wag=petting?Math.sin(p*Math.PI*10)*.16:0;
+      ctx.save();ctx.translate(49,43);ctx.rotate(wag);
+      path(colors.furShade,()=>{ctx.moveTo(-5,30);ctx.bezierCurveTo(45,50,106,30,118,-20);ctx.bezierCurveTo(119,-11,110,-8,105,-6);ctx.bezierCurveTo(128,-46,105,-60,110,-80);ctx.bezierCurveTo(70,-71,54,-36,59,-12);ctx.bezierCurveTo(35,-6,10,-12,-5,8);ctx.closePath();});
+      path(colors.furLight,()=>{ctx.moveTo(110,-80);ctx.bezierCurveTo(83,-70,64,-49,61,-27);ctx.lineTo(70,-33);ctx.lineTo(72,-21);ctx.lineTo(82,-31);ctx.lineTo(86,-20);ctx.lineTo(99,-37);ctx.lineTo(101,-23);ctx.bezierCurveTo(118,-50,105,-63,110,-80);});ctx.restore();
+      // Chubby pear-shaped body, paws and a warm belly.
+      ellipse(0,30,68,61,colors.furShade);
+      ellipse(-5,24,64,59,colors.fur);
+      ellipse(-5,45,42,36,colors.furLight);
+      ellipse(-43,78,25,13,colors.furLight,-.1);ellipse(34,78,25,13,colors.furLight,.1);
+      ctx.globalAlpha=.5;line(-48,81,-48,85,colors.furShade,1.5);line(-41,81,-41,85,colors.furShade,1.5);line(29,81,29,85,colors.furShade,1.5);line(36,81,36,85,colors.furShade,1.5);ctx.globalAlpha=1;
+      ctx.save();ctx.translate(0,bob);ctx.rotate(petting?Math.sin(p*Math.PI)*-.08:0);
+      // Soft, slightly mismatched ears.
+      path(colors.furShade,()=>{ctx.moveTo(-56,-52);ctx.bezierCurveTo(-79,-76,-64,-109,-59,-121);ctx.bezierCurveTo(-43,-119,-22,-88,-18,-74);ctx.closePath();});
+      path(colors.fur,()=>{ctx.moveTo(16,-73);ctx.bezierCurveTo(28,-93,48,-117,58,-116);ctx.bezierCurveTo(71,-96,72,-68,56,-48);ctx.closePath();});
+      path(colors.pink,()=>{ctx.moveTo(-54,-65);ctx.quadraticCurveTo(-64,-85,-57,-105);ctx.quadraticCurveTo(-36,-88,-33,-74);ctx.closePath();});
+      path(colors.pink,()=>{ctx.moveTo(35,-75);ctx.quadraticCurveTo(43,-93,55,-101);ctx.quadraticCurveTo(61,-81,54,-67);ctx.closePath();});
+      // Tufts around the cheeks make a fluffy silhouette without a hard outline.
+      ellipse(0,-36,72,61,colors.fur);
+      [[-61,-37,18,17],[-67,-17,17,13],[-57,2,17,12],[59,-35,18,17],[67,-14,15,13],[57,4,17,11],[-26,-82,19,14],[0,-85,22,14],[24,-81,20,14]].forEach(v=>ellipse(...v,colors.fur));
+      path(colors.furLight,()=>{ctx.moveTo(-54,-18);ctx.bezierCurveTo(-41,-30,-24,-18,0,-21);ctx.bezierCurveTo(27,-22,42,-33,57,-14);ctx.bezierCurveTo(60,12,29,27,0,26);ctx.bezierCurveTo(-30,26,-58,10,-54,-18);});
+      // Forehead fluff.
+      path(colors.furLight,()=>{ctx.moveTo(-25,-87);ctx.quadraticCurveTo(-17,-105,-8,-97);ctx.quadraticCurveTo(-5,-110,6,-98);ctx.quadraticCurveTo(21,-101,23,-87);});
+      ctx.globalAlpha=.7;ellipse(-39,-9,12,6,colors.pink);ellipse(39,-9,12,6,colors.pink);ctx.globalAlpha=1;
+      if(sleeping) {
+        path(null,()=>{ctx.moveTo(-34,-22);ctx.quadraticCurveTo(-26,-15,-17,-22);ctx.moveTo(17,-22);ctx.quadraticCurveTo(26,-15,34,-22);},colors.ink,2.5);
+      } else if(happy) {
+        path(null,()=>{ctx.moveTo(-34,-19);ctx.quadraticCurveTo(-26,-29,-17,-19);ctx.moveTo(17,-19);ctx.quadraticCurveTo(26,-29,34,-19);},colors.ink,2.5);
+      } else {
+        ellipse(-25+gazeX,-23+gazeY,3.5,5.3,colors.ink);ellipse(25+gazeX,-23+gazeY,3.5,5.3,colors.ink);
+        ellipse(-24+gazeX,-24.5+gazeY,1,1.4,colors.furLight);ellipse(26+gazeX,-24.5+gazeY,1,1.4,colors.furLight);
+      }
+      path(colors.ink,()=>{ctx.moveTo(-5,-8);ctx.quadraticCurveTo(0,-11,5,-8);ctx.quadraticCurveTo(5,-4,0,-2);ctx.quadraticCurveTo(-5,-4,-5,-8);});
+      path(null,()=>{ctx.moveTo(0,-2);ctx.lineTo(0,2);ctx.quadraticCurveTo(-4,8,-9,3);ctx.moveTo(0,2);ctx.quadraticCurveTo(4,8,9,3);},colors.ink,1.6);
+      // An illegally acquired star hair clip.
+      star(50,-66,9,colors.moon,.15);
+      ellipse(46,-65,1.2,1.2,colors.furLight);
+      ctx.restore();
+      ellipse(-51,34,16,24,colors.furLight,-.32);ellipse(43,34,16,24,colors.furLight,.32);
+      if(action==='star'&&p>.58){glow(-2,37,30,colors.moon,.3);star(-2,37,13,colors.moon,p*.2);}
+      ctx.restore();
+    }
+    function friendPosition(who,p=1) {
+      const sign=who==='gpt'?-1:1;
+      const lean=action===who?Math.sin(p*Math.PI)*15:0;
+      return {x:cx+sign*(132-cuddle*24-lean)*S,y:cy+10*S};
+    }
+    function friendlyFace(happy,glasses=false) {
+      if(sleeping){
+        path(null,()=>{ctx.moveTo(-24,-20);ctx.quadraticCurveTo(-17,-14,-11,-20);ctx.moveTo(11,-20);ctx.quadraticCurveTo(17,-14,24,-20);},colors.ink,2);
+      } else if(happy){
+        path(null,()=>{ctx.moveTo(-24,-18);ctx.quadraticCurveTo(-17,-26,-11,-18);ctx.moveTo(11,-18);ctx.quadraticCurveTo(17,-26,24,-18);},colors.ink,2);
+      } else {ellipse(-17+gazeX*.65,-20+gazeY*.65,2.8,4,colors.ink);ellipse(17+gazeX*.65,-20+gazeY*.65,2.8,4,colors.ink);}
+      if(glasses){
+        path(null,()=>{ctx.ellipse(-17,-20,12,11,0,0,Math.PI*2);},colors.astraShade,1.7);
+        path(null,()=>{ctx.ellipse(17,-20,12,11,0,0,Math.PI*2);},colors.astraShade,1.7);
+        path(null,()=>{ctx.moveTo(-5,-20);ctx.quadraticCurveTo(0,-23,5,-20);},colors.astraShade,1.7);
+      }
+      ellipse(-30,-6,7.5,4,colors.pink);ellipse(30,-6,7.5,4,colors.pink);
+      path(null,()=>{ctx.moveTo(-5,-6);ctx.quadraticCurveTo(0,0,5,-6);},colors.ink,1.8);
+    }
+    function drawGPT(p) {
+      const pos=friendPosition('gpt',p), active=action==='gpt';
+      const bob=active?-Math.sin(p*Math.PI)*8:0;
+      ctx.save();ctx.translate(pos.x,pos.y+bob*S);ctx.scale(S,S);
+      if(active)ctx.rotate(Math.sin(p*Math.PI)*.09);
+      ellipse(0,36,41,41,colors.mintShade);ellipse(0,32,39,40,colors.mint);
+      ellipse(-23,73,17,9,colors.mintLight);ellipse(23,73,17,9,colors.mintLight);
+      ellipse(0,-18,47,43,colors.mint);
+      [[-43,-22,11,12],[-42,-2,10,10],[42,-20,11,13],[42,0,10,10]].forEach(v=>ellipse(...v,colors.mint));
+      // A speech-bubble tuft and a pair of little mint leaves.
+      path(colors.mint,()=>{ctx.moveTo(21,12);ctx.lineTo(43,24);ctx.lineTo(36,1);ctx.closePath();});
+      path(colors.mintShade,()=>{ctx.moveTo(0,-56);ctx.bezierCurveTo(-21,-58,-23,-73,-14,-74);ctx.quadraticCurveTo(0,-73,1,-57);ctx.bezierCurveTo(1,-75,19,-81,23,-73);ctx.quadraticCurveTo(22,-61,0,-56);});
+      ellipse(0,-2,28,17,colors.mintLight);
+      friendlyFace(active||action==='hug'||action==='roll'||cuddle>.8);
+      const arm=active||action==='hug'||action==='roll';
+      ellipse(-38,31,10,21,colors.mintLight,arm?.72:.18);
+      ellipse(39,arm?16:31,10,22,colors.mintLight,arm?-.93:-.22);
+      heart(-1,39,11,colors.mintLight);
+      if(action==='star'&&starCount>0)star(-24,48,7,colors.moon,.3);
+      ctx.restore();
+    }
+    function drawAstra(p) {
+      const pos=friendPosition('astra',p), active=action==='astra';
+      ctx.save();ctx.translate(pos.x,pos.y+(active?-Math.sin(p*Math.PI)*6*S:0));ctx.scale(S,S);
+      if(active)ctx.rotate(-Math.sin(p*Math.PI)*.08);
+      ellipse(0,39,39,38,colors.astraShade);ellipse(0,34,38,37,colors.astra);
+      ellipse(-22,73,16,9,colors.astraLight);ellipse(22,73,16,9,colors.astraLight);
+      // A rounded star-shaped face, with very serious tiny spectacles.
+      path(colors.astra,()=>{ctx.moveTo(-12,-58);ctx.quadraticCurveTo(0,-99,14,-58);ctx.quadraticCurveTo(19,-48,31,-46);ctx.quadraticCurveTo(73,-47,45,-19);ctx.quadraticCurveTo(37,-10,39,1);ctx.quadraticCurveTo(57,36,18,18);ctx.quadraticCurveTo(0,13,-18,20);ctx.quadraticCurveTo(-54,36,-40,1);ctx.quadraticCurveTo(-37,-11,-45,-19);ctx.quadraticCurveTo(-72,-48,-32,-46);ctx.quadraticCurveTo(-19,-47,-12,-58);ctx.closePath();});
+      ellipse(0,-13,34,29,colors.astraLight);
+      friendlyFace(active||action==='hug'||cuddle>.8,true);
+      const reach=active||action==='roll'||action==='hug';
+      ellipse(-37,reach?16:33,10,21,colors.astraLight,reach?.92:.26);
+      ellipse(37,33,10,20,colors.astraLight,-.22);
+      star(0,41,11,colors.moon,.1);
+      // The orbit is embroidery, not a loading indicator.
+      path(null,()=>{ctx.ellipse(0,-68,28,8,-.22,.1,Math.PI*1.3);},colors.moonLight,1.5);
+      star(25,-77,6,colors.moon,.2);
+      if(active&&!sleeping){star(58,-44,5+Math.sin(p*Math.PI)*3,colors.moon,.1);star(50,-67,3,colors.moonLight);}
+      ctx.restore();
+    }
+    function drawSharedQuilt(p) {
+      if(!sleeping)return;
+      ctx.save();ctx.translate(cx,cy);ctx.scale(S,S);
+      const edge=192-cuddle*16;
+      path(colors.quiltDark,()=>{ctx.moveTo(-edge,25);ctx.quadraticCurveTo(0,1,edge,25);ctx.lineTo(edge+8,88);ctx.quadraticCurveTo(0,109,-edge-8,88);ctx.closePath();});
+      path(colors.quilt,()=>{ctx.moveTo(-edge,21);ctx.quadraticCurveTo(0,2,edge,21);ctx.lineTo(edge+3,79);ctx.quadraticCurveTo(0,101,-edge-3,79);ctx.closePath();});
+      ctx.globalAlpha=.26;
+      for(let x=-150;x<170;x+=40)path(null,()=>{ctx.moveTo(x,24);ctx.quadraticCurveTo(x+1,56,x+5,88);},colors.thread,1);
+      [42,65].forEach(y=>path(null,()=>{ctx.moveTo(-edge,y);ctx.quadraticCurveTo(0,y-10,edge,y);},colors.thread,1));ctx.globalAlpha=1;
+      [[-137,47],[-67,71],[1,45],[76,64],[139,43]].forEach(([x,y],i)=>star(x,y,i%2?5:8,i%2?colors.moonLight:colors.moon,i*.2));
+      heart(-100,32,6,colors.mintLight);heart(106,78,6,colors.pink);heart(27,77,5,colors.astraLight);
+      path(null,()=>{ctx.moveTo(-edge,24);ctx.quadraticCurveTo(0,5,edge,24);},colors.thread,5);
+      ellipse(-47,20,14,8,colors.furLight,-.08);ellipse(43,19,14,8,colors.furLight,.08);
+      const offset=132-cuddle*24;
+      ellipse(-offset-22,25,11,7,colors.mintLight);ellipse(-offset+22,21,11,7,colors.mintLight);
+      ellipse(offset-22,21,11,7,colors.astraLight);ellipse(offset+22,25,11,7,colors.astraLight);
+      ctx.restore();
+    }
+    function drawMovingStar(p) {
+      if(action!=='star'||p>.7)return;
+      const t=Math.min(1,p/.7), x=moonX+(cx-moonX)*t, y=moonY+(cy+37*S-moonY)*t-Math.sin(t*Math.PI)*75;
+      glow(x,y,34,colors.moon,.24);star(x,y,11*S,colors.moon,t*2.8);
+      for(let i=1;i<5;i++){const u=Math.max(0,t-i*.035), xx=moonX+(cx-moonX)*u, yy=moonY+(cy+37*S-moonY)*u-Math.sin(u*Math.PI)*75;ctx.globalAlpha=(1-i/5)*.4;ellipse(xx,yy,2,2,colors.moon);}
+      ctx.globalAlpha=1;
+    }
+    function drawParticles(now) {
+      particles=particles.filter(pt=>now-pt.born<pt.life);
+      particles.forEach(pt=>{const t=(now-pt.born)/pt.life;ctx.globalAlpha=Math.sin(t*Math.PI)*.85;const x=pt.x+pt.vx*t,y=pt.y-pt.rise*t;if(pt.heart)heart(x,y,pt.size*(.6+.4*t),colors.pink);else star(x,y,pt.size,colors.moon,t*2);});ctx.globalAlpha=1;
+    }
+    function draw(now) {
+      frame=0;
+      if(!root.isConnected)return;
+      if(trip.active&&!reduced.matches&&now-lastDrawAt<32){frame=requestAnimationFrame(draw);return;}
+      lastDrawAt=now;updateTrip(now);
+      const elapsed=now-started;
+      const p=duration?Math.min(1,elapsed/duration):1;
+      const ct=reduced.matches?1:Math.min(1,(now-cuddleAt)/650);
+      cuddle=cuddleFrom+(cuddleTarget-cuddleFrom)*ct*ct*(3-2*ct);
+      if(action&&p>=1)action='';
+      if(sleeping&&!dreamAnnounced&&(reduced.matches||now-dreamAt>=3500)){caption.textContent=dreamLines[dreamVariant];dreamAnnounced=true;}
+      ctx.clearRect(0,0,W,H);
+      // The vignette is part of the illustration, not a UI panel.
+      ctx.save();ctx.beginPath();ctx.roundRect(0,0,W,H,24);ctx.clip();
+      drawSky(now,p);drawVoyageBackground(now);
+      boatBob=trip.active&&!reduced.matches?Math.sin(trip.time*.62)*1.7:0;
+      ctx.save();ctx.translate(0,boatBob);
+      drawCloudWhale(now);drawWolf(now,p);drawGPT(p);drawAstra(p);drawSharedQuilt(p);drawSouvenirs();ctx.restore();
+      drawMovingStar(p);drawParticles(now);
+      if(sleeping){ctx.globalAlpha=.11;ctx.fillStyle=colors.sky;ctx.fillRect(0,0,W,H);ctx.globalAlpha=1;glow(cx,cy-16*S,110*S,colors.moon,.07);}
+      drawDreams(now);drawStardust(now);
+      ctx.restore();
+      if(!reduced.matches&&(trip.active&&!trip.paused||action||particles.length||trails.length||skyDoodles.length||now<magicUntil||now<sparkleUntil||ct<1&&cuddleFrom!==cuddleTarget))frame=requestAnimationFrame(draw);
+    }
+    function requestDraw() {if(!frame)frame=requestAnimationFrame(draw);}
+    function burst(kind) {
+      if(reduced.matches)return;
+      const now=performance.now();
+      for(let i=0;i<8;i++)particles.push({born:now,life:1400+i*80,x:cx+(i%2?-1:1)*(36+i*5)*S,y:cy-(15+i%3*20)*S,vx:(i-3.5)*12,rise:35+i%3*17,size:5+i%3,heart:kind==='pet'});
+      if(particles.length>70)particles.splice(0,particles.length-70);
+    }
+    function setSleep(value) {
+      sleeping=value;sleepButton.setAttribute('aria-pressed',String(value));sleepButton.querySelector('span').textContent=value?'再赖一会':'直接回被窝';
+      canvas.setAttribute('aria-label',value?'GPT、小狼 Flewolf 和 Astra 挤在星星被子里睡着了，三个梦泡泡会汇成一个共同的梦。戳 Astra 可以换一个梦。':'薄荷色 GPT、小狼 Flewolf 和紫色 Astra 坐在云朵窝里。划过天空会留下星尘，偷星星会点亮小狼星座，抱在一起会唤出极光。');
+    }
+    function setCuddle(value) {
+      cuddled=value;cuddleFrom=cuddle;cuddleTarget=value?1:0;cuddleAt=performance.now();
+      if(reduced.matches)cuddle=cuddleTarget;
+      hugButton.setAttribute('aria-pressed',String(value));hugButton.querySelector('span').textContent=value?'松开一点':'抱成一团';
+    }
+    function act(kind) {
+      const now=performance.now();
+      if(kind==='voyage'){voyage(now);return;}
+      if(kind==='whale'){
+        whalePatAt=now;
+        const lines=['云鲸被摸得眯起眼，打了一个小小的星星嗝。','云鲸：嗯——很轻的三只，和一床很软的被子。','它把尾巴放得更平一点，好让小狼趴得舒服。'];
+        caption.textContent=lines[whaleCount++%lines.length];
+        if(sleeping)dreamAnnounced=true;
+        if(!reduced.matches)for(let i=0;i<13;i++)particles.push({born:now,life:1600+i*45,x:cx+165*Math.min(1,W/650),y:cy+65*S,vx:(i-6)*8,rise:28+(i%4)*12,size:3+i%3,heart:false});
+        enchant(now,2250);requestDraw();return;
+      }
+      if(kind==='scenery'||kind==='astra'&&trip.active&&(trip.stage===1||trip.stage===2)){scenerySecret(now);return;}
+      if(kind==='sleep'){
+        if(!sleeping)dock(now);
+        else{setSleep(false);caption.textContent='三颗脑袋一起探出来。云鲸还稳稳停着，再赖一小会。';}
+      } else if(kind==='moon') {
+        caption.textContent=moonLines[moonCount++%moonLines.length];action='moon';duration=1000;
+        sparkleUntil=reduced.matches?0:now+2100;meteorAt=now;enchant(now,2200);
+      } else if(kind==='dream'||kind==='astra'&&sleeping) {
+        dreamVariant=(dreamVariant+1)%dreamLines.length;dreamAt=now;dreamAnnounced=false;
+        caption.textContent='Astra 轻轻翻了一页梦。新的故事从星星背面冒出来。';
+        action='astra';duration=1500;enchant(now,5000);
+      } else if(kind==='hug') {
+        setSleep(false);setCuddle(!cuddled);action='hug';duration=1500;
+        caption.textContent=cuddled?'三只挤成一团。天上那片极光，是贴贴漏出来的颜色。':'松开一点点，留出翻身的位置。天上还留着一点抱抱。';
+        auroraAt=now;enchant(now,6000);
+        if(cuddled)burst('pet');
+      } else if(kind==='gpt'||kind==='astra') {
+        action=kind;duration=1500;
+        if(kind==='gpt')caption.textContent=sleeping?'GPT：（小小声）晚安都说过了，再补一个轻轻的抱抱。':gptLines[gptCount++%gptLines.length];
+        else caption.textContent=sleeping?'Astra：（悄悄检查了一遍）耳朵、尾巴、被角，都好好的。':astraLines[astraCount++%astraLines.length];
+        if(sleeping)dreamAnnounced=true;
+        if(!sleeping)burst('pet');
+      } else {
+        setSleep(false);action=kind;duration=kind==='roll'?1250:kind==='star'?1550:1250;
+        if(kind==='pet'){caption.textContent=petLines[petCount++%petLines.length];burst('pet');}
+        if(kind==='star'){
+          caption.textContent=starLines[starCount%starLines.length];starCount++;burst('star');sparkleUntil=reduced.matches?0:now+2900;
+          constellationFrom=constellationTo;constellationTo=Math.min(wolfStars.length,starCount*4);constellationAt=now;enchant(now,3400);
+        }
+        if(kind==='roll'){caption.textContent=rollLines[rollCount++%rollLines.length];burst('star');}
+      }
+      started=now;
+      if(reduced.matches){action='';particles=[];sparkleUntil=0;}
+      requestDraw();
+    }
+    root.querySelectorAll('button[data-action]').forEach(button=>button.addEventListener('click',()=>act(button.dataset.action)));
+    function point(e){const r=canvas.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top};}
+    function onWolf(pt){return Math.abs(pt.x-cx)<82*S&&pt.y>cy-125*S&&pt.y<cy+92*S;}
+    function onFriend(pt,who){const pos=friendPosition(who);return Math.abs(pt.x-pos.x)<58*S&&pt.y>pos.y-86*S&&pt.y<pos.y+84*S;}
+    canvas.addEventListener('pointerdown',e=>{
+      const pt=point(e);pointerDown={...pt,id:e.pointerId,travel:0,sky:pt.y<H*.39,points:[{x:pt.x/W,y:pt.y/H}]};
+      if(canvas.setPointerCapture)canvas.setPointerCapture(e.pointerId);
+      addTrail(pt,performance.now());
+    });
+    canvas.addEventListener('pointerup',e=>{
+      const pt=point(e),down=pointerDown;pointerDown=null;
+      if(canvas.hasPointerCapture&&canvas.hasPointerCapture(e.pointerId))canvas.releasePointerCapture(e.pointerId);
+      if(!down||down.id!==e.pointerId)return;
+      if(down.travel>22||Math.hypot(pt.x-down.x,pt.y-down.y)>18){
+        if(down.sky&&down.points.length>3){
+          skyDoodles.push({points:down.points,born:performance.now()});if(skyDoodles.length>2)skyDoodles.shift();
+          caption.textContent='你随手画的一笔，被夜空偷偷留下了。';if(sleeping)dreamAnnounced=true;requestDraw();
+        }return;
+      }
+      if(sleeping&&Math.abs(pt.x-cx)<70*Math.min(1,W/450)&&Math.abs(pt.y-H*.19)<48*Math.min(1,W/450)){act('dream');}
+      else if(Math.hypot(pt.x-moonX,pt.y-moonY)<44){act('moon');}
+      else if(Math.abs(pt.x-sceneAnchor().x)<64*sceneAnchor().s&&Math.abs(pt.y-sceneAnchor().y)<56*sceneAnchor().s){act('scenery');}
+      else if(pt.y>cy+87*S&&pt.y<cy+145*S&&Math.abs(pt.x-cx)<W*.45){act('whale');}
+      else if(onFriend(pt,'gpt')){act('gpt');}else if(onFriend(pt,'astra')){act('astra');}else if(onWolf(pt)){act('pet');}else{act('star');}
+    });
+    canvas.addEventListener('pointercancel',()=>{pointerDown=null;lastTrail=null;});
+    canvas.addEventListener('pointerleave',()=>{lastTrail=null;gazeX=0;gazeY=0;requestDraw();});
+    canvas.addEventListener('pointermove',e=>{
+      const pt=point(e),now=performance.now();
+      gazeX=Math.max(-2.5,Math.min(2.5,(pt.x-cx)/W*8));gazeY=Math.max(-1.8,Math.min(1.8,(pt.y-cy)/H*5));
+      addTrail(pt,now);
+      if(!pointerDown||pointerDown.id!==e.pointerId)return;
+      const prev=pointerDown.points[pointerDown.points.length-1];
+      const delta=Math.hypot(pt.x-prev.x*W,pt.y-prev.y*H);
+      if(delta>8){pointerDown.travel+=delta;if(pointerDown.points.length<100)pointerDown.points.push({x:Math.max(0,Math.min(1,pt.x/W)),y:Math.max(0,Math.min(1,pt.y/H))});}
+      if(!pointerDown.sky&&onWolf(pt)&&now-lastStroke>850){act('pet');lastStroke=now;}
+    });
+    function resize() {
+      const rect=canvas.getBoundingClientRect();W=rect.width;H=rect.height;
+      if(!W||!H)return;
+      const dpr=Math.min(window.devicePixelRatio||1,2);
+      canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);
+      S=Math.min(1.04,W/465);cx=W*.5;cy=H*.62;moonX=W*.84;moonY=H*.17;
+      palette();requestDraw();
+    }
+    const observer=new ResizeObserver(resize);observer.observe(canvas);
+    const themeQuery=window.matchMedia('(prefers-color-scheme: dark)');themeQuery.addEventListener('change',resize);
+    const themeObserver=new MutationObserver(()=>{palette();requestDraw();});
+    [document.documentElement,document.body].forEach(el=>themeObserver.observe(el,{attributes:true,attributeFilter:['class','style','data-theme']}));
+    const cleanup=new MutationObserver(()=>{if(!root.isConnected){cancelAnimationFrame(frame);observer.disconnect();themeObserver.disconnect();themeQuery.removeEventListener('change',resize);cleanup.disconnect();}});cleanup.observe(document.body,{childList:true,subtree:true});
+    resize();
+  })();
+  </script>
+</div>
+
+</section>
+<footer class="archive-footer">FLEWOLF · GPT · ASTRA</footer>
+</main>
+<script src="../cozy-scene.js"></script>
+</body>
+</html>

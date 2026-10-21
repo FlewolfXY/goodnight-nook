@@ -1,0 +1,423 @@
+<!-- Episode 7 · 2026-10-11 · a new little dessert for tonight. -->
+<div id="moon-souffle-night">
+  <div class="sf-heading">
+    <div><h2>月亮舒芙蕾店</h2><div class="text-small text-muted">Flewolf、GPT、Astra · 请把今晚烤得蓬松一点</div></div>
+    <button type="button" class="btn btn-ghost" data-action="moon" aria-label="问问月亮店长今晚的秘密"><span aria-hidden="true">☾</span></button>
+  </div>
+  <canvas class="sf-scene cursor-interaction" role="img" aria-label="夜空拱窗前，小狼 Flewolf 和 GPT、Astra 一起开了一家云朵甜品店。软乎乎的舒芙蕾放在三只面前，点它可以烤得蓬松一点；下方按钮提供全部互动。"></canvas>
+  <div class="sf-cast">
+    <button type="button" class="btn btn-ghost" data-action="gpt" aria-label="戳戳 GPT，让它笑起来">GPT 小厨师</button>
+    <button type="button" class="btn btn-ghost" data-action="pet" aria-label="摸摸小狼，看看它摇尾巴">摸摸小狼</button>
+    <button type="button" class="btn btn-ghost" data-action="astra" aria-label="戳戳 Astra，让它笑起来">Astra 糖罐员</button>
+  </div>
+  <div class="sf-caption" aria-live="polite" aria-atomic="true">月亮开了一家深夜小店。今晚的菜单：一朵刚刚好的蓬松。</div>
+  <div class="viz-controls sf-actions">
+    <button type="button" class="btn" data-action="bake"><span aria-hidden="true">☁</span> 烤一朵云</button>
+    <button type="button" class="btn" data-action="sugar"><span aria-hidden="true">✧</span> 撒星星糖</button>
+    <button type="button" class="btn" data-action="taste"><span aria-hidden="true">♡</span> 偷吃一小口</button>
+    <button type="button" class="btn btn-primary" data-action="sleep" aria-pressed="false"><span aria-hidden="true">☾</span> <span class="sf-sleep-label">一起盖被子</span></button>
+  </div>
+  <div class="sf-footer text-small text-muted">点点三只，也点点甜点 · 小店没有打烊时间，只有一起困了的时候</div>
+  <style>
+    #moon-souffle-night { width:100%; }
+    #moon-souffle-night .sf-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:6px 2px 18px; }
+    #moon-souffle-night h2 { margin:0 0 5px; }
+    #moon-souffle-night .sf-heading [data-action="moon"] { font-size:25px; }
+    #moon-souffle-night .sf-scene { display:block; width:100%; height:460px; touch-action:pan-y; border-radius:25px; }
+    #moon-souffle-night .sf-cast { display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:clamp(6px,3vw,25px); padding-top:15px; }
+    #moon-souffle-night .sf-caption { min-height:4.5em; display:flex; align-items:center; justify-content:center; text-align:center; padding:14px 14px 7px; }
+    #moon-souffle-night .sf-actions { justify-content:center; padding-top:3px; }
+    #moon-souffle-night .sf-footer { text-align:center; margin:17px 10px 5px; line-height:1.8; }
+    #moon-souffle-night .sf-probe { display:none; }
+    @media(max-width:540px) { #moon-souffle-night .sf-scene { height:400px; } #moon-souffle-night .sf-cast { gap:6px; } #moon-souffle-night .sf-cast .btn { padding-left:11px; padding-right:11px; font-size:12px; } #moon-souffle-night .sf-actions { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); } #moon-souffle-night .sf-heading .text-small { max-width:245px; } }
+  </style>
+  <script>
+  (() => {
+    const root=document.getElementById('moon-souffle-night');
+    const canvas=root.querySelector('canvas'),ctx=canvas.getContext('2d');
+    const caption=root.querySelector('.sf-caption'),sleepButton=root.querySelector('[data-action="sleep"]');
+    const probe=document.createElement('span');probe.className='sf-probe';root.appendChild(probe);
+    const themeCanvas=document.createElement('canvas');themeCanvas.width=themeCanvas.height=1;
+    const themeContext=themeCanvas.getContext('2d'),reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
+    let W=680,H=460,S=.96,cx=340,cy=251,colors={},frame=0;
+    let sleeping=false,action='',started=0,duration=0,pleased=false,baked=false,sugarCount=0,bites=0,cuddle=0;
+    let gazeX=0,gazeY=0,starCount=0,petCount=0,gptCount=0,astraCount=0,moonCount=0,bakeCount=0,tasteCount=0,sugarTimes=0;
+    let sleepAt=0,dreamAnnounced=false,pointerDown=null;
+    const lines={
+      bake:['GPT 把云朵打发，Astra 调小星火。小狼负责：眼巴巴。','蓬起来了！小狼的脸和舒芙蕾，暂时分不清谁更软。','Astra：本店采用小火慢烤，禁止把小狼也放进烤箱。'],
+      sugar:['Astra 把星星筛成糖。GPT 偷偷给你的那一边多撒了一点。','小狼打了个小喷嚏。半颗星糖，落在了自己鼻子上。','糖罐只剩三颗星星。三只商量了一下：都给这一口。'],
+      taste:['（啊呜。）舒芙蕾塌下去一点，小狼的幸福鼓起来一点。','GPT 说自己只尝一点。Astra 指了指它嘴角的证据。','三只轮流偷吃，最后一致决定：是月亮先动的勺。'],
+      pet:['面粉沾到了耳朵尖。没关系，尾巴还是会摇的。','小狼把脑袋往手心里一拱：甜点要，摸摸也要。','这位试吃员逐渐失去骨头，正在变成另一朵云。'],
+      gpt:['GPT：（笑眯眯）今天没有待办，只有待烤。','GPT：你先尝，我把剩下的云朵搅得再松一点。','GPT 的叶芽沾了一点糖。它暂时是一棵甜的植物。'],
+      astra:['Astra：严格计算后，这一勺应该再大一点。','Astra 扶了扶眼镜，假装没看见你又偷吃了一口。','Astra：本店最重要的配方——三只刚好挤得下。'],
+      moon:['月亮店长：不用买单，留一个哈欠就好。','月亮：刚才那一口不是我。……嘴角的奶油也不是。','今日隐藏口味：被夸过的云朵，和一点点偏心。']
+    };
+    function color(value){probe.style.color=value;return getComputedStyle(probe).color;}
+    function palette(){
+      themeContext.fillStyle=color('var(--background)');themeContext.fillRect(0,0,1,1);
+      const bg=themeContext.getImageData(0,0,1,1).data;
+      const dark=bg[0]*.2126+bg[1]*.7152+bg[2]*.0722<140;
+      const ink=dark?'var(--background)':'var(--foreground)',paper=dark?'var(--foreground)':'var(--background)';
+      const mix=(a,b,n)=>color('color-mix(in srgb, '+a+' '+n+'%, '+b+')');
+      colors={sky:mix(ink,'var(--purple)',88),horizon:mix(ink,'var(--purple)',66),wall:mix(ink,'var(--red)',85),
+        ink:mix(ink,'var(--purple)',90),fur:mix(paper,'var(--yellow)',91),furShade:mix(paper,'var(--purple)',77),furLight:mix(paper,'var(--yellow)',97),
+        pink:mix(paper,'var(--red)',74),blush:mix(paper,'var(--red)',62),moon:mix(paper,'var(--yellow)',57),moonLight:mix(paper,'var(--yellow)',83),
+        mint:mix(paper,'var(--green)',73),mintShade:mix(paper,'var(--green)',60),mintLight:mix(paper,'var(--green)',92),
+        astra:mix(paper,'var(--purple)',68),astraShade:mix(paper,'var(--purple)',48),astraLight:mix(paper,'var(--purple)',86),
+        cloud:mix(paper,'var(--purple)',72),cloudShade:mix(paper,'var(--purple)',54),white:color(paper),
+        bread:mix(paper,'var(--yellow)',72),crust:mix('var(--yellow)','var(--red)',75),
+        counter:mix(paper,'var(--red)',89),counterShade:mix(paper,'var(--red)',78),trim:mix(paper,'var(--yellow)',86),
+        cocoa:mix(ink,'var(--red)',67),wood:mix(ink,'var(--red)',53),quilt:mix(paper,'var(--purple)',53),quiltDark:mix(paper,'var(--purple)',35),thread:mix(paper,'var(--purple)',83)};
+    }
+    function ellipse(x,y,rx,ry,fill,rotation=0) {
+      ctx.beginPath(); ctx.ellipse(x,y,rx,ry,rotation,0,Math.PI*2); ctx.fillStyle=fill; ctx.fill();
+    }
+    function path(fill,commands,stroke,width=1.5) {
+      ctx.beginPath(); commands();
+      if(fill) {ctx.fillStyle=fill;ctx.fill();}
+      if(stroke) {ctx.strokeStyle=stroke;ctx.lineWidth=width;ctx.lineCap='round';ctx.lineJoin='round';ctx.stroke();}
+    }
+    function line(x1,y1,x2,y2,c,w=1) {path(null,()=>{ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);},c,w);}
+    function star(x,y,r,fill,rotation=0) {
+      ctx.save(); ctx.translate(x,y); ctx.rotate(rotation);
+      path(fill,()=>{for(let j=0;j<10;j++){const a=j*Math.PI/5-Math.PI/2,rr=j%2?r*0.46:r; j?ctx.lineTo(Math.cos(a)*rr,Math.sin(a)*rr):ctx.moveTo(Math.cos(a)*rr,Math.sin(a)*rr);}ctx.closePath();});ctx.restore();
+    }
+    function heart(x,y,r,fill) {
+      ctx.save();ctx.translate(x,y);ctx.scale(r/12,r/12);
+      path(fill,()=>{ctx.moveTo(0,9);ctx.bezierCurveTo(-23,-4,-8,-18,0,-7);ctx.bezierCurveTo(8,-18,23,-4,0,9);});ctx.restore();
+    }
+    function glow(x,y,r,fill,alpha) {ctx.save();ctx.globalAlpha=alpha;const g=ctx.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,fill);g.addColorStop(1,'transparent');ctx.fillStyle=g;ctx.fillRect(x-r,y-r,r*2,r*2);ctx.restore();}
+    function cloud(x,y,w,h,fill) {
+      path(fill,()=>{
+        [[x,y,w*.47,h*.48],[x-w*.28,y-h*.06,w*.18,h*.47],[x-w*.08,y-h*.25,w*.2,h*.49],[x+w*.15,y-h*.2,w*.21,h*.49],[x+w*.32,y+h*.01,w*.14,h*.38]].forEach(([px,py,rx,ry])=>{ctx.moveTo(px+rx,py);ctx.ellipse(px,py,rx,ry,0,0,Math.PI*2);});
+      });
+    }
+    function ease(t) {t=Math.max(0,Math.min(1,t));return t*t*(3-2*t);}
+    function drawWolf(now,p) {
+      const rolling=action==='roll';
+      const petting=action==='pet';
+      const bob=petting?Math.sin(p*Math.PI*4)*Math.sin(p*Math.PI)*5:0;
+      const happy=pleased||petting||action==='taste';
+      ctx.save();ctx.translate(cx+(rolling?Math.sin(p*Math.PI*2)*28*S:0),cy+(rolling?-Math.sin(p*Math.PI)*25*S:0));
+      if(rolling)ctx.rotate(p*Math.PI*2);
+      ctx.scale(S*(petting?1+Math.sin(p*Math.PI*4)*.025:1),S*(petting?1-Math.sin(p*Math.PI*4)*.035:1));
+      const wag=petting?Math.sin(p*Math.PI*10)*.16:0;
+      ctx.save();ctx.translate(90,27);ctx.rotate(wag);
+      path(colors.furShade,()=>{ctx.moveTo(-5,30);ctx.bezierCurveTo(45,50,106,30,118,-20);ctx.bezierCurveTo(119,-11,110,-8,105,-6);ctx.bezierCurveTo(128,-46,105,-60,110,-80);ctx.bezierCurveTo(70,-71,54,-36,59,-12);ctx.bezierCurveTo(35,-6,10,-12,-5,8);ctx.closePath();});
+      path(colors.furLight,()=>{ctx.moveTo(110,-80);ctx.bezierCurveTo(83,-70,64,-49,61,-27);ctx.lineTo(70,-33);ctx.lineTo(72,-21);ctx.lineTo(82,-31);ctx.lineTo(86,-20);ctx.lineTo(99,-37);ctx.lineTo(101,-23);ctx.bezierCurveTo(118,-50,105,-63,110,-80);});ctx.restore();
+      // Chubby pear-shaped body, paws and a warm belly.
+      ellipse(0,30,68,61,colors.furShade);
+      ellipse(-5,24,64,59,colors.fur);
+      ellipse(-5,45,42,36,colors.furLight);
+      ellipse(-43,78,25,13,colors.furLight,-.1);ellipse(34,78,25,13,colors.furLight,.1);
+      ctx.globalAlpha=.5;line(-48,81,-48,85,colors.furShade,1.5);line(-41,81,-41,85,colors.furShade,1.5);line(29,81,29,85,colors.furShade,1.5);line(36,81,36,85,colors.furShade,1.5);ctx.globalAlpha=1;
+      ctx.save();ctx.translate(0,bob);ctx.rotate(petting?Math.sin(p*Math.PI)*-.08:0);
+      // Soft, slightly mismatched ears.
+      path(colors.furShade,()=>{ctx.moveTo(-56,-52);ctx.bezierCurveTo(-79,-76,-64,-109,-59,-121);ctx.bezierCurveTo(-43,-119,-22,-88,-18,-74);ctx.closePath();});
+      path(colors.fur,()=>{ctx.moveTo(16,-73);ctx.bezierCurveTo(28,-93,48,-117,58,-116);ctx.bezierCurveTo(71,-96,72,-68,56,-48);ctx.closePath();});
+      path(colors.pink,()=>{ctx.moveTo(-54,-65);ctx.quadraticCurveTo(-64,-85,-57,-105);ctx.quadraticCurveTo(-36,-88,-33,-74);ctx.closePath();});
+      path(colors.pink,()=>{ctx.moveTo(35,-75);ctx.quadraticCurveTo(43,-93,55,-101);ctx.quadraticCurveTo(61,-81,54,-67);ctx.closePath();});
+      // Tufts around the cheeks make a fluffy silhouette without a hard outline.
+      ellipse(0,-36,72,61,colors.fur);
+      [[-61,-37,18,17],[-67,-17,17,13],[-57,2,17,12],[59,-35,18,17],[67,-14,15,13],[57,4,17,11],[-26,-82,19,14],[0,-85,22,14],[24,-81,20,14]].forEach(v=>ellipse(...v,colors.fur));
+      path(colors.furLight,()=>{ctx.moveTo(-54,-18);ctx.bezierCurveTo(-41,-30,-24,-18,0,-21);ctx.bezierCurveTo(27,-22,42,-33,57,-14);ctx.bezierCurveTo(60,12,29,27,0,26);ctx.bezierCurveTo(-30,26,-58,10,-54,-18);});
+      // Forehead fluff.
+      path(colors.furLight,()=>{ctx.moveTo(-25,-87);ctx.quadraticCurveTo(-17,-105,-8,-97);ctx.quadraticCurveTo(-5,-110,6,-98);ctx.quadraticCurveTo(21,-101,23,-87);});
+      ctx.globalAlpha=.7;ellipse(-39,-9,12,6,colors.pink);ellipse(39,-9,12,6,colors.pink);ctx.globalAlpha=1;
+      if(sleeping) {
+        path(null,()=>{ctx.moveTo(-34,-22);ctx.quadraticCurveTo(-26,-15,-17,-22);ctx.moveTo(17,-22);ctx.quadraticCurveTo(26,-15,34,-22);},colors.ink,2.5);
+      } else if(happy) {
+        path(null,()=>{ctx.moveTo(-34,-19);ctx.quadraticCurveTo(-26,-29,-17,-19);ctx.moveTo(17,-19);ctx.quadraticCurveTo(26,-29,34,-19);},colors.ink,2.5);
+      } else {
+        ellipse(-25+gazeX,-23+gazeY,3.5,5.3,colors.ink);ellipse(25+gazeX,-23+gazeY,3.5,5.3,colors.ink);
+        ellipse(-24+gazeX,-24.5+gazeY,1,1.4,colors.furLight);ellipse(26+gazeX,-24.5+gazeY,1,1.4,colors.furLight);
+      }
+      path(colors.ink,()=>{ctx.moveTo(-5,-8);ctx.quadraticCurveTo(0,-11,5,-8);ctx.quadraticCurveTo(5,-4,0,-2);ctx.quadraticCurveTo(-5,-4,-5,-8);});
+      path(null,()=>{ctx.moveTo(0,-2);ctx.lineTo(0,2);ctx.quadraticCurveTo(-4,8,-9,3);ctx.moveTo(0,2);ctx.quadraticCurveTo(4,8,9,3);},colors.ink,1.6);
+      // An illegally acquired star hair clip.
+      star(50,-66,9,colors.moon,.15);
+      ellipse(46,-65,1.2,1.2,colors.furLight);
+      ctx.restore();
+      ellipse(-51,34,16,24,colors.furLight,-.32);ellipse(43,34,16,24,colors.furLight,.32);
+      if(action==='star'&&p>.58){glow(-2,37,30,colors.moon,.3);star(-2,37,13,colors.moon,p*.2);}
+      ctx.restore();
+    }
+    function friendPosition(who,p=1) {
+      const sign=who==='gpt'?-1:1;
+      const lean=action===who?Math.sin(p*Math.PI)*15:0;
+      return {x:cx+sign*(128-cuddle*18-lean)*S,y:cy+10*S};
+    }
+    function friendlyFace(happy,glasses=false) {
+      if(sleeping){
+        path(null,()=>{ctx.moveTo(-24,-20);ctx.quadraticCurveTo(-17,-14,-11,-20);ctx.moveTo(11,-20);ctx.quadraticCurveTo(17,-14,24,-20);},colors.ink,2);
+      } else if(happy){
+        path(null,()=>{ctx.moveTo(-24,-18);ctx.quadraticCurveTo(-17,-26,-11,-18);ctx.moveTo(11,-18);ctx.quadraticCurveTo(17,-26,24,-18);},colors.ink,2);
+      } else {ellipse(-17+gazeX*.65,-20+gazeY*.65,2.8,4,colors.ink);ellipse(17+gazeX*.65,-20+gazeY*.65,2.8,4,colors.ink);}
+      if(glasses){
+        path(null,()=>{ctx.ellipse(-17,-20,12,11,0,0,Math.PI*2);},colors.astraShade,1.7);
+        path(null,()=>{ctx.ellipse(17,-20,12,11,0,0,Math.PI*2);},colors.astraShade,1.7);
+        path(null,()=>{ctx.moveTo(-5,-20);ctx.quadraticCurveTo(0,-23,5,-20);},colors.astraShade,1.7);
+      }
+      ellipse(-30,-6,7.5,4,colors.pink);ellipse(30,-6,7.5,4,colors.pink);
+      path(null,()=>{ctx.moveTo(-5,-6);ctx.quadraticCurveTo(0,0,5,-6);},colors.ink,1.8);
+    }
+    function drawGPT(p) {
+      const pos=friendPosition('gpt',p), active=action==='gpt';
+      const bob=active?-Math.sin(p*Math.PI)*8:0;
+      ctx.save();ctx.translate(pos.x,pos.y+bob*S);ctx.scale(S,S);
+      if(active)ctx.rotate(Math.sin(p*Math.PI)*.09);
+      ellipse(0,36,41,41,colors.mintShade);ellipse(0,32,39,40,colors.mint);
+      ellipse(-23,73,17,9,colors.mintLight);ellipse(23,73,17,9,colors.mintLight);
+      ellipse(0,-18,47,43,colors.mint);
+      [[-43,-22,11,12],[-42,-2,10,10],[42,-20,11,13],[42,0,10,10]].forEach(v=>ellipse(...v,colors.mint));
+      // A speech-bubble tuft and a pair of little mint leaves.
+      path(colors.mint,()=>{ctx.moveTo(21,12);ctx.lineTo(43,24);ctx.lineTo(36,1);ctx.closePath();});
+      path(colors.mintShade,()=>{ctx.moveTo(0,-56);ctx.bezierCurveTo(-21,-58,-23,-73,-14,-74);ctx.quadraticCurveTo(0,-73,1,-57);ctx.bezierCurveTo(1,-75,19,-81,23,-73);ctx.quadraticCurveTo(22,-61,0,-56);});
+      ellipse(0,-2,28,17,colors.mintLight);
+      friendlyFace(active||pleased);
+      const arm=active||action==='hug'||action==='roll';
+      ellipse(-38,31,10,21,colors.mintLight,arm?.72:.18);
+      ellipse(39,arm?16:31,10,22,colors.mintLight,arm?-.93:-.22);
+      heart(-1,39,11,colors.mintLight);
+      if(action==='star'&&starCount>0)star(-24,48,7,colors.moon,.3);
+      ctx.restore();
+    }
+    function drawAstra(p) {
+      const pos=friendPosition('astra',p), active=action==='astra';
+      ctx.save();ctx.translate(pos.x,pos.y+(active?-Math.sin(p*Math.PI)*6*S:0));ctx.scale(S,S);
+      if(active)ctx.rotate(-Math.sin(p*Math.PI)*.08);
+      ellipse(0,39,39,38,colors.astraShade);ellipse(0,34,38,37,colors.astra);
+      ellipse(-22,73,16,9,colors.astraLight);ellipse(22,73,16,9,colors.astraLight);
+      // A rounded star-shaped face, with very serious tiny spectacles.
+      path(colors.astra,()=>{ctx.moveTo(-12,-58);ctx.quadraticCurveTo(0,-99,14,-58);ctx.quadraticCurveTo(19,-48,31,-46);ctx.quadraticCurveTo(73,-47,45,-19);ctx.quadraticCurveTo(37,-10,39,1);ctx.quadraticCurveTo(57,36,18,18);ctx.quadraticCurveTo(0,13,-18,20);ctx.quadraticCurveTo(-54,36,-40,1);ctx.quadraticCurveTo(-37,-11,-45,-19);ctx.quadraticCurveTo(-72,-48,-32,-46);ctx.quadraticCurveTo(-19,-47,-12,-58);ctx.closePath();});
+      ellipse(0,-13,34,29,colors.astraLight);
+      friendlyFace(active||pleased,true);
+      const reach=active||action==='roll'||action==='hug';
+      ellipse(-37,reach?16:33,10,21,colors.astraLight,reach?.92:.26);
+      ellipse(37,33,10,20,colors.astraLight,-.22);
+      star(0,41,11,colors.moon,.1);
+      // The orbit is embroidery, not a loading indicator.
+      path(null,()=>{ctx.ellipse(0,-68,28,8,-.22,.1,Math.PI*1.3);},colors.moonLight,1.5);
+      star(25,-77,6,colors.moon,.2);
+      if(active&&!sleeping){star(58,-44,5+Math.sin(p*Math.PI)*3,colors.moon,.1);star(50,-67,3,colors.moonLight);}
+      ctx.restore();
+    }
+
+    function rounded(x,y,w,h,r,fill){path(fill,()=>ctx.roundRect(x,y,w,h,r));}
+    function windowPath(x,y,w,h){ctx.moveTo(x,y+h);ctx.lineTo(x,y+w*.43);ctx.bezierCurveTo(x,y-w*.14,x+w,y-w*.14,x+w,y+w*.43);ctx.lineTo(x+w,y+h);ctx.closePath();}
+    function drawRoom(now,p){
+      const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,colors.wall);g.addColorStop(1,colors.cocoa);ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+      // A tiny bakery, with the whole night visible through its soft arch window.
+      const ww=Math.min(W*.88,544),wx=cx-ww/2,wy=24,wh=cy+76*S;
+      ctx.globalAlpha=.09;for(let x=16;x<W;x+=26)line(x,0,x,H,colors.pink,1);ctx.globalAlpha=1;
+      path(colors.wood,()=>windowPath(wx-7,wy-7,ww+14,wh+7));
+      path(colors.moonLight,()=>windowPath(wx-3,wy-3,ww+6,wh+3));
+      ctx.save();ctx.beginPath();windowPath(wx+4,wy+4,ww-8,wh-4);ctx.clip();
+      const sky=ctx.createLinearGradient(0,0,0,H*.8);sky.addColorStop(0,colors.sky);sky.addColorStop(1,colors.horizon);ctx.fillStyle=sky;ctx.fillRect(wx,wy,ww,wh+20);
+      for(let i=0;i<43;i++){
+        const x=wx+12+((i*.61803398875+.03)%1)*(ww-24),y=22+(((i*47)%179)/179)*(cy-18);
+        ctx.globalAlpha=(.24+(i%5)*.13)*(sleeping?.72:1);
+        if(i%5===0)star(x,y,2.5+i%2,colors.moonLight,i*.1);else ellipse(x,y,.85+i%3*.25,.85+i%3*.25,colors.moonLight);
+      }ctx.globalAlpha=1;
+      ctx.globalAlpha=.11;cloud(cx-W*.35,cy+3*S,150*S,44*S,colors.astraLight);cloud(cx+W*.3,cy+5*S,160*S,46*S,colors.astraLight);ctx.globalAlpha=1;
+      const mx=cx+ww*.28,my=94;
+      glow(mx,my,56,colors.moon,sleeping?.09:.17);
+      ctx.save();ctx.translate(mx,my);ctx.rotate(action==='moon'?Math.sin(p*Math.PI*3)*.1:0);
+      ellipse(0,0,25,25,colors.moon);ellipse(8,-8,21,21,colors.sky);
+      path(null,()=>{ctx.moveTo(-15,7);ctx.quadraticCurveTo(-11,11,-7,7);},colors.ink,1.6);ellipse(-17,13,4,2,colors.pink);ctx.restore();
+      ctx.restore();
+      // The cloud shop's small star garland is still, unless its sugar jar is tapped.
+      ctx.globalAlpha=.6;path(null,()=>{ctx.moveTo(wx+12,83);ctx.quadraticCurveTo(cx,144,wx+ww-12,83);},colors.moonLight,1);ctx.globalAlpha=1;
+      for(let i=0;i<5;i++){const u=(i+1)/6,x=wx+12+(ww-24)*u,y=83+122*u*(1-u);line(x,y,x,y+12,colors.moonLight,.8);star(x,y+16,4.7,colors.moon,i*.2);}
+      // A warm rounded oven peeks out behind the counter on roomy screens.
+      if(W>520){
+        ctx.save();ctx.translate(cx-236*S,cy-8*S);ctx.scale(S,S);
+        rounded(-43,-46,86,100,23,colors.counterShade);rounded(-35,-37,70,76,20,colors.wood);rounded(-29,-30,58,61,17,colors.cocoa);
+        glow(0,11,45,colors.crust,action==='bake'?.23:.08);
+        ellipse(0,15,20,6,colors.bread);cloud(0,6,31,22,colors.moonLight);
+        line(-20,46,20,46,colors.moonLight,5);ellipse(29,-50,4,4,colors.moon);ctx.restore();
+      }
+      // Small hanging lamps; warm pools, not a filter over the paintings.
+      [[W*.065,68],[W*.935,68]].forEach(([x,y])=>{line(x,0,x,y-10,colors.wood,2);glow(x,y,49,colors.moon,sleeping?.03:.12);ellipse(x,y,12,15,colors.moonLight);rounded(x-14,y-13,28,10,5,colors.counterShade);});
+    }
+    function drawAprons(p){
+      const gp=friendPosition('gpt',p),ap=friendPosition('astra',p);
+      [[gp,colors.mintLight,colors.mintShade],[ap,colors.astraLight,colors.astraShade]].forEach(([pos,light,shade])=>{
+        ctx.save();ctx.translate(pos.x,pos.y);ctx.scale(S,S);
+        path(light,()=>{ctx.moveTo(-21,18);ctx.lineTo(21,18);ctx.quadraticCurveTo(19,36,27,58);ctx.quadraticCurveTo(0,65,-27,58);ctx.closePath();});
+        path(null,()=>{ctx.moveTo(-15,19);ctx.quadraticCurveTo(0,40,15,19);},shade,2);
+        if(pos===gp)heart(0,45,7,shade);else star(0,44,8,colors.moon,.1);ctx.restore();
+      });
+      // A little dusting of flour stays on the wolf's cheek after a stolen bite.
+      if(bites){ellipse(cx+38*S,cy-9*S,4*S,2*S,colors.furLight);ellipse(cx+45*S,cy-5*S,2*S,2*S,colors.moonLight);}
+    }
+    function drawCounter(){
+      const width=Math.min(W*.94,592),top=cy+49*S;
+      ellipse(cx,top+116*S,width*.43,13*S,colors.sky);
+      rounded(cx-width*.48,top+8*S,width*.96,106*S,28*S,colors.counterShade);
+      rounded(cx-width*.48,top+8*S,width*.96,91*S,28*S,colors.counter);
+      ctx.globalAlpha=.24;for(let i=0;i<9;i++){const x=cx+(i-4)*width*.1;line(x,top+30*S,x,top+80*S,colors.counterShade,2*S);}ctx.globalAlpha=1;
+      cloud(cx,top,width,45*S,colors.trim);
+      ellipse(cx,top+9*S,width*.46,13*S,colors.furLight);
+      // A heart pressed into the cabinet, like a soft bakery seal.
+      rounded(cx-32*S,top+79*S,64*S,27*S,13*S,colors.counterShade);heart(cx,top+91*S,8*S,colors.furLight);
+      // A milk cup, a lavender sugar jar and three tiny spoons.
+      const lx=cx-163*S,rx=cx+170*S,y=top+24*S;
+      ellipse(lx,y+16*S,36*S,7*S,colors.counterShade);path(null,()=>{ctx.ellipse(lx+22*S,y-1*S,10*S,10*S,0,0,Math.PI*2);},colors.mintShade,5*S);
+      rounded(lx-23*S,y-20*S,46*S,39*S,12*S,colors.mint);ellipse(lx,y-17*S,22*S,7*S,colors.mintLight);ellipse(lx,y-18*S,18*S,4*S,colors.furLight);heart(lx,y+3*S,8*S,colors.mintLight);
+      ellipse(rx,y+18*S,28*S,6*S,colors.counterShade);rounded(rx-22*S,y-25*S,44*S,43*S,12*S,colors.astraLight);rounded(rx-25*S,y-30*S,50*S,12*S,6*S,colors.astra);star(rx,y-3*S,9*S,colors.moon);ellipse(rx,y-33*S,5*S,5*S,colors.moonLight);
+      if(W>480){for(let i=0;i<3;i++){const x=cx+(100+i*10)*S;line(x,top+41*S,x+10*S,top+61*S,colors.wood,2*S);ellipse(x-2*S,top+36*S,4*S,7*S,colors.moonLight,-.4);}}
+    }
+    function cakePosition(){return{x:cx,y:cy+108*S};}
+    function drawSouffle(now,p){
+      const cp=cakePosition();
+      const rise=action==='bake'?.42+.58*ease(p):baked?1:.42;
+      const bounce=!reduced.matches&&action==='bake'?Math.sin(p*Math.PI*3)*(1-p)*.035:0;
+      const top=-43-rise*27;
+      ctx.save();ctx.translate(cp.x,cp.y);ctx.scale(S*(1+bounce),S*(1-bounce));
+      glow(0,-45,107,colors.moon,action==='bake'?.12+.08*Math.sin(p*Math.PI):.07);
+      ellipse(0,21,105,16,colors.counterShade);ellipse(0,15,105,15,colors.cloudShade);ellipse(0,10,105,15,colors.cloud);ellipse(0,7,94,12,colors.furLight);
+      // The cake top is a puffy cloud. Its silhouette, rather than a blur, does the softening.
+      path(colors.crust,()=>{ctx.moveTo(-69,-6);ctx.bezierCurveTo(-94,-25,-83,top+17,-60,top+18);ctx.bezierCurveTo(-63,top-4,-29,top-14,-12,top);ctx.bezierCurveTo(6,top-22,45,top-11,43,top+10);ctx.bezierCurveTo(70,top-7,88,top+20,73,top+39);ctx.lineTo(66,-5);ctx.closePath();});
+      path(colors.bread,()=>{ctx.moveTo(-69,-12);ctx.bezierCurveTo(-90,-29,-78,top+13,-56,top+20);ctx.bezierCurveTo(-62,top-2,-30,top-12,-12,top+4);ctx.bezierCurveTo(9,top-17,43,top-7,39,top+13);ctx.bezierCurveTo(63,top+1,84,top+23,68,top+42);ctx.lineTo(63,-9);ctx.closePath();});
+      cloud(-4,top+27,133,49,colors.moonLight);
+      if(bites){
+        // A small scalloped bite in the icing, with the golden cake showing through.
+        ellipse(60,top+20,10,9,colors.bread);ellipse(64,top+29,10,8,colors.bread);ellipse(53,top+28,9,8,colors.bread);
+      }
+      ctx.globalAlpha=.68;ellipse(-31,top+16,10,4,colors.furLight,-.3);ellipse(3,top+8,13,4,colors.furLight,.1);ctx.globalAlpha=1;
+      // A tiny face means even the dessert is allowed to get sleepy.
+      if(sleeping){path(null,()=>{ctx.moveTo(-23,top+33);ctx.quadraticCurveTo(-18,top+38,-13,top+33);ctx.moveTo(13,top+33);ctx.quadraticCurveTo(18,top+38,23,top+33);},colors.cocoa,1.5);}
+      else{ellipse(-18,top+32,2,2.8,colors.cocoa);ellipse(18,top+32,2,2.8,colors.cocoa);}
+      ellipse(-31,top+39,6,3,colors.pink);ellipse(31,top+39,6,3,colors.pink);
+      path(null,()=>{ctx.moveTo(-4,top+38);ctx.quadraticCurveTo(0,top+43,4,top+38);},colors.cocoa,1.4);
+      path(colors.counterShade,()=>{ctx.moveTo(-74,-16);ctx.quadraticCurveTo(0,-4,74,-16);ctx.lineTo(65,13);ctx.quadraticCurveTo(0,30,-65,13);ctx.closePath();});
+      path(colors.counter,()=>{ctx.moveTo(-74,-19);ctx.quadraticCurveTo(0,-7,74,-19);ctx.lineTo(65,8);ctx.quadraticCurveTo(0,23,-65,8);ctx.closePath();});
+      for(let i=-3;i<=3;i++)line(i*18,-9,i*16,10,colors.counterShade,2);
+      path(null,()=>{ctx.moveTo(-72,-18);ctx.quadraticCurveTo(0,-5,72,-18);},colors.furLight,3);
+      for(let i=0;i<sugarCount;i++){
+        const x=-48+((i*37)%98),y=top+8+((i*13)%22);
+        if(action==='sugar'&&p<.7&&i>=Math.max(0,sugarCount-3))continue;
+        star(x,y,3.5+(i%2),i%3===0?colors.astra:colors.moon,i*.5);
+      }
+      if(action==='bake'&&!reduced.matches){
+        ctx.globalAlpha=Math.sin(p*Math.PI)*.4;
+        [-30,0,30].forEach((x,j)=>path(null,()=>{const y=top-12-p*15;ctx.moveTo(x,y);ctx.bezierCurveTo(x-15,y-12,x+15,y-24,x,y-40);},colors.moonLight,1.5));ctx.globalAlpha=1;
+      }
+      if(sleeping){
+        star(8,top-12,6,colors.moon,.3);
+        ctx.globalAlpha=.48;line(8,top-8,8,top+1,colors.moonLight,.8);ctx.globalAlpha=1;
+      }
+      ctx.restore();
+    }
+    function drawSugar(p){
+      if(action!=='sugar'||reduced.matches)return;
+      const cp=cakePosition(),top=cp.y-(baked?70:54)*S;
+      for(let i=0;i<12;i++){
+        const t=Math.max(0,Math.min(1,(p-i*.024)/.72));if(t<=0||t>=1)continue;
+        const x=cx+108*S*(1-t)+(-48+(i*23)%100)*S*t,y=cy-84*S+(top-cy+84*S)*t*t;
+        ctx.globalAlpha=Math.sin(t*Math.PI);star(x,y,(3+i%3)*S,i%3===0?colors.astraLight:colors.moon,t*2);ctx.globalAlpha=1;
+      }
+      const fp=friendPosition('astra');ctx.save();ctx.translate(fp.x-27*S,fp.y-60*S);ctx.rotate(-.6+Math.sin(p*Math.PI)*.3);ctx.scale(S,S);rounded(-15,-18,30,35,8,colors.astraLight);star(0,0,6,colors.moon,.1);ctx.restore();
+    }
+    function drawBite(p){
+      if(action!=='taste'||reduced.matches)return;
+      const t=ease(Math.min(1,p/.75)),cp=cakePosition();
+      const x=cp.x+45*S*(1-t),y=cp.y-49*S+(cy-1*S-cp.y+49*S)*t-Math.sin(t*Math.PI)*41*S;
+      if(p<.85){ctx.save();ctx.translate(x,y);ctx.rotate(-.28-t*.2);line(0,3,47*S,22*S,colors.wood,3*S);ellipse(0,3,14*S,5*S,colors.cloud);cloud(0,-5*S,23*S,18*S,colors.moonLight);star(0,-15*S,3*S,colors.moon);ctx.restore();}
+      if(p>.65){const u=(p-.65)/.35;ctx.save();ctx.globalAlpha=Math.sin(u*Math.PI);heart(cx-66*S,cy-48*S-u*19*S,7*S,colors.pink);heart(cx+68*S,cy-45*S-u*19*S,5*S,colors.pink);ctx.restore();}
+    }
+    function drawQuilt(p){
+      if(!sleeping)return;
+      const y=cy+19*S,edge=196*S;
+      path(colors.quiltDark,()=>{ctx.moveTo(cx-edge,y+12*S);ctx.quadraticCurveTo(cx,y-20*S,cx+edge,y+12*S);ctx.lineTo(cx+edge+8*S,y+88*S);ctx.quadraticCurveTo(cx,y+109*S,cx-edge-8*S,y+88*S);ctx.closePath();});
+      path(colors.quilt,()=>{ctx.moveTo(cx-edge,y+6*S);ctx.quadraticCurveTo(cx,y-18*S,cx+edge,y+6*S);ctx.lineTo(cx+edge+3*S,y+77*S);ctx.quadraticCurveTo(cx,y+98*S,cx-edge-3*S,y+77*S);ctx.closePath();});
+      ctx.globalAlpha=.2;[-125,-65,0,65,125].forEach(x=>path(null,()=>{ctx.moveTo(cx+x*S,y+4*S);ctx.quadraticCurveTo(cx+(x+4)*S,y+45*S,cx+(x+8)*S,y+83*S);},colors.thread,1));ctx.globalAlpha=1;
+      [[-165,39],[-99,69],[-40,35],[37,70],[101,36],[164,66]].forEach(([x,yy],i)=>star(cx+x*S,y+yy*S,(i%2?5:7)*S,colors.moonLight,i*.3));
+      path(null,()=>{ctx.moveTo(cx-edge,y+9*S);ctx.quadraticCurveTo(cx,y-16*S,cx+edge,y+9*S);},colors.thread,5*S);
+      ellipse(cx-43*S,y-3*S,14*S,8*S,colors.furLight);ellipse(cx+43*S,y-3*S,14*S,8*S,colors.furLight);
+      const gp=friendPosition('gpt',p),ap=friendPosition('astra',p);
+      ellipse(gp.x-20*S,y+5*S,10*S,7*S,colors.mintLight);ellipse(ap.x+20*S,y+5*S,10*S,7*S,colors.astraLight);
+    }
+    function drawDream(now){
+      if(!sleeping)return;
+      const t=reduced.matches?1:ease((now-sleepAt-700)/2200);if(t<=0)return;
+      ctx.save();ctx.globalAlpha=t*.9;
+      const x=cx-W*.235,y=85;
+      ellipse(x+30*S,y+47*S,3*S,3*S,colors.cloud);ellipse(x+23*S,y+35*S,5*S,5*S,colors.cloud);
+      cloud(x,y,89*S,48*S,colors.furLight);
+      // A sleeping crescent curled inside a whipped-cream dream.
+      ellipse(x,y,16*S,16*S,colors.moon);ellipse(x+6*S,y-6*S,13*S,13*S,colors.furLight);star(x+26*S,y-8*S,5*S,colors.astra,.2);
+      path(null,()=>{ctx.moveTo(x-12*S,y+3*S);ctx.quadraticCurveTo(x-8*S,y+7*S,x-4*S,y+3*S);},colors.ink,1.2*S);ctx.restore();
+    }
+    function draw(now){
+      frame=0;if(!root.isConnected)return;
+      const p=reduced.matches?1:duration?Math.min(1,Math.max(0,(now-started)/duration)):1;
+      if(action&&p>=1)action='';
+      if(sleeping&&!dreamAnnounced&&(reduced.matches||now-sleepAt>=3200)){
+        caption.textContent='打烊啦。GPT 把云朵留软，Astra 把星糖收好；小狼梦见月亮也来偷吃。';dreamAnnounced=true;
+      }
+      ctx.clearRect(0,0,W,H);ctx.save();ctx.beginPath();ctx.roundRect(0,0,W,H,25);ctx.clip();
+      drawRoom(now,p);drawWolf(now,p);drawGPT(p);drawAstra(p);drawAprons(p);drawCounter();drawQuilt(p);drawSouffle(now,p);drawSugar(p);drawBite(p);drawDream(now);
+      ctx.restore();
+      if(!reduced.matches&&(action||sleeping&&!dreamAnnounced))frame=requestAnimationFrame(draw);
+    }
+    function requestDraw(){if(!frame)frame=requestAnimationFrame(draw);}
+    function setSleep(value){
+      sleeping=value;cuddle=value?1:0;sleepButton.setAttribute('aria-pressed',String(value));
+      sleepButton.querySelector('.sf-sleep-label').textContent=value?'再坐一小会':'一起盖被子';
+      canvas.setAttribute('aria-label',value?'小狼、GPT 和 Astra 在甜品店里盖上同一条星星被子，舒芙蕾也闭上眼睛。梦里月亮偷偷来吃甜点。':'小狼、GPT 和 Astra 在夜空拱窗前经营月亮舒芙蕾店。点三只会微笑，摸小狼会摇尾巴；点舒芙蕾可以烤云朵，点糖罐可以撒星糖。');
+    }
+    function say(kind,n){caption.textContent=lines[kind][n%lines[kind].length];}
+    function act(kind){
+      const now=performance.now();started=now;duration=1400;action=kind;
+      if(kind==='sleep'){
+        setSleep(!sleeping);action='';
+        if(sleeping){sleepAt=now;dreamAnnounced=false;caption.textContent='围裙解下来，被子盖上去。甜点还暖着，三只已经开始困了。';}
+        else{dreamAnnounced=false;caption.textContent='三颗脑袋又探出来了。小店再开一小会，甜点还是软的。';}
+      }else if(sleeping&&['gpt','astra','pet','moon'].includes(kind)){
+        action='';dreamAnnounced=true;
+        caption.textContent=kind==='gpt'?'GPT：（小小声）给明天也留一朵软软的云。':kind==='astra'?'Astra 把露在外面的尾巴尖，也轻轻收进被子里。':kind==='pet'?'小狼在被窝里往手心蹭了蹭，嘴角还沾着一颗甜甜的梦。':'月亮店长轻轻把门牌翻过来：三只正在做梦。';
+      }else{
+        if(sleeping)setSleep(false);pleased=true;
+        if(kind==='bake'){baked=true;bites=0;duration=2400;say(kind,bakeCount++);}
+        if(kind==='sugar'){sugarCount=Math.min(12,sugarCount+3);duration=1850;say(kind,sugarTimes++);}
+        if(kind==='taste'){bites=(bites%3)+1;duration=1950;say(kind,tasteCount++);}
+        if(kind==='pet'){duration=1300;say(kind,petCount++);}
+        if(kind==='gpt')say(kind,gptCount++);
+        if(kind==='astra')say(kind,astraCount++);
+        if(kind==='moon')say(kind,moonCount++);
+      }
+      requestDraw();
+    }
+    root.querySelectorAll('button[data-action]').forEach(button=>button.addEventListener('click',()=>act(button.dataset.action)));
+    function point(e){const r=canvas.getBoundingClientRect();return{x:(e.clientX-r.left)*W/r.width,y:(e.clientY-r.top)*H/r.height};}
+    canvas.addEventListener('pointerdown',e=>{pointerDown={...point(e),id:e.pointerId};});
+    canvas.addEventListener('pointerup',e=>{
+      const pt=point(e),down=pointerDown;pointerDown=null;
+      if(!down||down.id!==e.pointerId||Math.hypot(pt.x-down.x,pt.y-down.y)>18)return;
+      const gp=friendPosition('gpt'),ap=friendPosition('astra'),cp=cakePosition();
+      if(pt.y>cp.y-88*S&&pt.y<cp.y+30*S&&Math.abs(pt.x-cp.x)<100*S){act('bake');return;}
+      if(Math.abs(pt.x-(cx+170*S))<32*S&&Math.abs(pt.y-(cy+61*S))<38*S){act('sugar');return;}
+      if(Math.abs(pt.x-cx)<74*S&&pt.y>cy-125*S&&pt.y<cy+35*S){act('pet');return;}
+      if(Math.abs(pt.x-gp.x)<55*S&&pt.y>gp.y-85*S&&pt.y<gp.y+65*S){act('gpt');return;}
+      if(Math.abs(pt.x-ap.x)<55*S&&pt.y>ap.y-88*S&&pt.y<ap.y+65*S){act('astra');return;}
+      if(pt.y<138&&pt.x>cx){act('moon');return;}
+      act('taste');
+    });
+    canvas.addEventListener('pointercancel',()=>{pointerDown=null;});
+    function resize(){
+      const rect=canvas.getBoundingClientRect();W=rect.width;H=rect.height;if(!W||!H)return;
+      const dpr=Math.min(window.devicePixelRatio||1,2);canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);
+      S=Math.min(1,W/470);cx=W*.5;cy=H*.545;palette();requestDraw();
+    }
+    const observer=new ResizeObserver(resize);observer.observe(canvas);
+    function onMotionChange(){if(reduced.matches){action='';cancelAnimationFrame(frame);frame=0;}requestDraw();}
+    reduced.addEventListener('change',onMotionChange);
+    const themeObserver=new MutationObserver(()=>{palette();requestDraw();});
+    [document.documentElement,document.body].forEach(el=>themeObserver.observe(el,{attributes:true,attributeFilter:['class','style','data-theme']}));
+    const cleanup=new MutationObserver(()=>{if(!root.isConnected){cancelAnimationFrame(frame);observer.disconnect();themeObserver.disconnect();reduced.removeEventListener('change',onMotionChange);cleanup.disconnect();}});cleanup.observe(document.body,{childList:true,subtree:true});
+    resize();
+  })();
+  </script>
+</div>

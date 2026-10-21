@@ -1,0 +1,137 @@
+/* HatchBeads-inspired paper and controls. The original canvas palette stays intact. */
+/* The outer room and standalone pages start dark without changing drawing tokens. */
+:root {
+  --room-paper: #080d1b;
+  --room-card: #111a2c;
+  --room-ink: #d7dbea;
+  --room-secondary: #b9c2d8;
+  --room-muted: #929fbb;
+  --room-line: rgba(155,178,222,.12);
+  --room-button: #1b2941;
+  --room-button-hover: #263753;
+  --room-primary: #2c3d5d;
+  --room-primary-ink: #d7dbea;
+  --room-mint: #183231;
+  --room-mint-ink: #9fcbbc;
+  --room-lavender: #28233d;
+  --room-lavender-ink: #c1addd;
+  --room-peach: #302836;
+  --room-peach-ink: #d8bfa8;
+  --room-shadow: 0 3px 10px rgba(2,5,16,.2);
+  --room-focus: #b5a3d0;
+  color-scheme: dark;
+}
+html[data-theme="cream"] {
+  color-scheme: light;
+  --room-paper: #f7efe9;
+  --room-card: #fff9f3;
+  --room-ink: #443345;
+  --room-secondary: #685369;
+  --room-muted: #796276;
+  --room-line: rgba(43, 35, 32, .08);
+  --room-button: #f6eee2;
+  --room-button-hover: #efe3d2;
+  --room-primary: #634563;
+  --room-primary-ink: #fff9f3;
+  --room-mint: #e0f0e5;
+  --room-mint-ink: #34684a;
+  --room-lavender: #eee5f8;
+  --room-lavender-ink: #725488;
+  --room-peach: #fbe9d7;
+  --room-peach-ink: #8a542e;
+  --room-shadow: 0 3px 10px rgba(110, 80, 50, .07);
+  --room-focus: #b66b35;
+}
+
+html, body { background: var(--room-paper); }
+body {
+  color: var(--room-ink);
+  font-family: -apple-system, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+html.embedded, html.embedded body { background: var(--room-card); }
+html, body, .archive-frame { transition: background-color 1.6s ease, color 1.6s ease; }
+body .archive-frame { padding-top: 24px; }
+body .archive-nav { color: var(--room-muted); }
+body .archive-back:hover { color: var(--room-ink); }
+body .archive-badge {
+  background: var(--room-peach);
+  color: var(--room-peach-ink);
+  border: 0;
+  padding: 4px 12px;
+  font-weight: 600;
+}
+body .scene-shell h2 {
+  color: var(--room-ink);
+  font-size: clamp(23px, 4vw, 29px);
+  font-weight: 800;
+  letter-spacing: .02em;
+}
+body .text-muted,
+body .scene-shell [class*="-footer"],
+body .archive-footer { color: var(--room-muted); }
+body .scene-shell [class*="-caption"] {
+  color: var(--room-secondary);
+  font-size: 14px;
+  line-height: 1.75;
+}
+body .scene-shell h2,
+body .text-muted,
+body .scene-shell [class*="-caption"],
+body .scene-shell [class*="-footer"] { transition: color 1.6s ease; }
+
+body .btn {
+  min-height: 44px;
+  border: 1px solid var(--room-line);
+  border-radius: 999px;
+  padding: 9px 17px;
+  background: var(--room-button);
+  color: var(--room-ink);
+  box-shadow: var(--room-shadow);
+  font-size: 13px;
+  font-weight: 600;
+  transition: transform .15s ease, box-shadow .2s ease, background-color 1.6s ease, color 1.6s ease;
+}
+body .btn:hover {
+  border-color: var(--room-line);
+  background: var(--room-button-hover);
+}
+body .btn:active { transform: scale(.97); box-shadow: none; }
+body .btn-ghost { background: var(--room-button); }
+body .btn[data-action="gpt"] { background: var(--room-mint); color: var(--room-mint-ink); }
+body .btn[data-action="astra"] { background: var(--room-lavender); color: var(--room-lavender-ink); }
+body .btn[data-action="hug"],
+body .btn[data-action="moon"] { background: var(--room-peach); color: var(--room-peach-ink); }
+body .btn[data-action="moon"] { width: 44px; padding: 0; flex: none; }
+body .btn-primary,
+body .btn[data-action="sleep"] {
+  background: var(--room-primary);
+  color: var(--room-primary-ink);
+  border-color: transparent;
+  box-shadow: 0 5px 14px rgba(43, 35, 32, .14);
+  font-weight: 700;
+}
+body .btn-primary:hover,
+body .btn[data-action="sleep"]:hover { background: var(--room-primary); border-color: transparent; }
+body .btn[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--room-focus), var(--room-shadow); }
+body .btn:focus-visible,
+body a:focus-visible { outline: 2px solid var(--room-focus); outline-offset: 4px; }
+body .btn:disabled { transform: none; opacity: .55; }
+body .viz-controls { gap: 10px; }
+
+@media (max-width: 540px) {
+  html.embedded .archive-frame { padding: 17px 8px 23px; }
+  body .btn { font-size: 12px; padding: 9px 13px; }
+  body .btn[data-action="moon"] { padding: 0; }
+  body .viz-controls { gap: 9px; }
+  body .scene-shell h2 { font-size: 23px; }
+  body .scene-shell [class*="-caption"] { font-size: 13px; }
+  body .text-small { font-size: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html, body, .archive-frame, body .btn,
+  body .scene-shell h2, body .text-muted,
+  body .scene-shell [class*="-caption"],
+  body .scene-shell [class*="-footer"] { transition: none; }
+  body .btn:hover, body .btn:active { transform: none; }
+}

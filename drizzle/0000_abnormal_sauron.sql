@@ -1,0 +1,20 @@
+CREATE TABLE `nook_states` (
+	`user_id` text PRIMARY KEY NOT NULL,
+	`version` integer DEFAULT 1 NOT NULL,
+	`paper` integer DEFAULT false NOT NULL,
+	`pillow` integer DEFAULT false NOT NULL,
+	`pillow_welcomed` integer DEFAULT false NOT NULL,
+	`pillow_place` text DEFAULT 'newton' NOT NULL,
+	`created_at` text NOT NULL,
+	`pillow_made_at` text,
+	`updated_at` text NOT NULL,
+	`revision` integer DEFAULT 0 NOT NULL,
+	CONSTRAINT "nook_version_v1" CHECK("nook_states"."version" = 1),
+	CONSTRAINT "nook_paper_boolean" CHECK("nook_states"."paper" IN (0, 1)),
+	CONSTRAINT "nook_pillow_boolean" CHECK("nook_states"."pillow" IN (0, 1)),
+	CONSTRAINT "nook_welcomed_boolean" CHECK("nook_states"."pillow_welcomed" IN (0, 1)),
+	CONSTRAINT "nook_pillow_place" CHECK("nook_states"."pillow_place" IN ('newton', 'wolf')),
+	CONSTRAINT "nook_welcomed_requires_pillow" CHECK("nook_states"."pillow_welcomed" = 0 OR "nook_states"."pillow" = 1),
+	CONSTRAINT "nook_made_at_matches_pillow" CHECK(("nook_states"."pillow" = 0 AND "nook_states"."pillow_made_at" IS NULL) OR ("nook_states"."pillow" = 1 AND "nook_states"."pillow_made_at" IS NOT NULL)),
+	CONSTRAINT "nook_revision_nonnegative" CHECK("nook_states"."revision" >= 0)
+);
