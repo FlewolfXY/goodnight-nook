@@ -266,5 +266,16 @@
     "family": "moon-mushroom-post-office",
     "order": 23,
     "createdOn": "2026-10-22"
+  },
+  {
+    "id": "cloud-dryer-night",
+    "title": "云朵烘干店",
+    "subtitle": "把云朵烘暖，给空着爪爪的小狼留一个位置",
+    "path": "scenes/cloud-dryer-night.html",
+    "episode": 22,
+    "type": "夜游",
+    "color": "#b8cec1",
+    "family": "cloud-dryer-night",
+    "order": 24
   }
 ]
