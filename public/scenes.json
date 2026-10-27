@@ -277,5 +277,17 @@
     "color": "#b8cec1",
     "family": "cloud-dryer-night",
     "order": 24
+  },
+  {
+    "id": "moon-waterwheel-study",
+    "title": "月光水车书房",
+    "subtitle": "一架小水车，一本画满好奇的笔记，和留给你的位置",
+    "path": "scenes/moon-waterwheel-study.html",
+    "episode": 23,
+    "type": "月光小发明",
+    "color": "#b8c6be",
+    "family": "moon-waterwheel-study",
+    "order": 25,
+    "createdOn": "2026-10-28"
   }
 ]
