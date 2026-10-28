@@ -289,5 +289,17 @@
     "family": "moon-waterwheel-study",
     "order": 25,
     "createdOn": "2026-10-28"
+  },
+  {
+    "id": "moon-mending-shop",
+    "title": "月亮修补铺",
+    "subtitle": "给漏星光的小伞挑块补丁，和四个软软的小家伙一起收工",
+    "path": "scenes/moon-mending-shop.html",
+    "episode": 24,
+    "type": "星光补丁",
+    "color": "#c0adba",
+    "family": "moon-mending-shop",
+    "order": 26,
+    "createdOn": "2026-10-29"
   }
 ]

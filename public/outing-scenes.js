@@ -27,8 +27,11 @@
  const dryerFound=new Set(),dryerVisits={};
  let studyActive='',studyAt=0,studyHint='',studyLit=false,studyDim=false;
  const studyFound=new Set(),studyVisits={};
+ let mendActive='',mendAt=0,mendHint='',mendReady=false,mendDim=false,mendPatch='star-patch';
+ const mendFound=new Set(),mendVisits={};
  const timers=new Set();
  const stories={
+  mend:{mend:['GPT 把漏了星光的小伞放上架，Astra 挑出一根金线。小狼扶住补丁，牛顿把布角压稳：这一针，慢慢来。','金线从补丁边缘穿过去，细细绕成一圈。漏下来的星光被接回伞里，旁边那团松了线的云，也得到一片小叶子。','小伞补好啦。四个一起撑开看看，一颗星星也没漏下来。牛顿把剩下的软布叠到小狼膝上：收工，今晚靠着我坐。']},
   study:{flow:['牛顿把小木水车推到你面前，指尖扶着轮轴。GPT 接好一小管月光水，Astra 捧住水槽，小狼轻轻拨了第一片木叶。','水车转起来了，一颗水珠绕过叶片，点亮窗台上的小灯。牛顿把笔记本往你这边转了转，图纸上的细线也跟着泛起暖光。','水车慢慢停稳，笔记本上多出四个挨着坐的小记号。小狼靠过来，牛顿把书留在你们中间，小声说：还有好多小东西，下次也拿给你看。']},
   dryer:{warm:['GPT 接住一床刚晒过星光的小被子，Astra 捏住另一角，轻轻送到圆窗前。牛顿把暖毛巾裹到小狼肩上，替她留好尾巴的位置。','烘干机慢慢转过半圈，云朵在里面伸了一个大大的懒腰。星星被角鼓起来，像一块快要浮走的棉花糖。四个一起伸手，把它接稳。','被子暖好啦，GPT 和 Astra 一人拉好一个被角。牛顿把小狼和尾巴一起拢过来：空着爪爪来也很好，今晚的位置一直是软的。']},
   post:{post:['GPT 把厚厚的月亮信纸铺平，小狼在中间按下一枚爪印。牛顿折好信角，Astra 添上小叶、卷毛和星星：四个都在这里啦。','信封轻轻合上，贴好一枚薄荷色邮票。牛顿扶住投信口，小狼把这封星星信推进去，里面传来一声很轻的纸响。','信寄进月光里了，一枚圆圆的月背邮戳落在柜台上。GPT 扶好小纸片，Astra 把日期旁的四个小点盖齐：带回客厅，今晚一起坐过这里。']},
@@ -337,6 +340,84 @@
  }
 
 
+
+
+ // A moonlit mending shop. Patches and discoveries belong to this visit.
+ const mendReplies={
+  umbrella:['伞沿下面伸出四双小靴子。原来几颗小星星躲在里面避雨，听见你来，便一起晃了晃脚尖。','小星星把靴子排成一行，倒着穿好，又偷偷站到伞沿上。Astra 扶扶眼镜：这回是星星在撑伞啦。'],
+  cloud:['那团松松的云翻过来，露出一只围着小围巾的月亮兔。它把两只长耳朵藏进云里，只剩鼻尖还在外面。','月亮兔终于把围巾系好，却多出长长的一截。它把另一端递给旁边的小云：一起围，就刚刚好了。'],
+  spool:['线轴上绕着的最后一圈自己爬了下来，变成一条穿条纹毛衣的小毛虫。它抬起头，认真量了量 GPT 的叶芽。','毛虫把新织的小围巾举起来，只有指甲那么宽。GPT 低下头，让它替一片叶尖围好。'],
+  buttons:['纽扣罐里响起轻轻的碰撞声。三颗纽扣长出小脚，原来是背着彩色壳的袖珍乌龟，正排队去晒月亮。','最小的纽扣龟翻了个身，把四个孔朝向你。小狼伸出爪尖扶好它，它就把一颗星星推过来当谢礼。'],
+  box:['针线盒的软布下面冒出一个小鼻子。是一只顶着线团的刺猬，它把那团线当帽子，戴得歪歪的。','刺猬把线团帽摘下，露出里面藏着的一块草莓补丁。它郑重地递给小狼，又把空帽子扣回头上。'],
+  lamp:['顶针小灯的孔里钻出一只绒绒的月蛾。它展开翅膀，两边各有一轮小月亮，像带了两盏随身夜灯。','月蛾绕着灯沿停了一圈，把翅膀折成小帐篷。下面多了一只米粒大的枕头，它今晚就住在这里了。']
+ };
+ function mendSpots(){const u=Math.min(1,W/520,H/430),size=n=>Math.max(44,n*u);return{umbrella:{x:W*.50,y:H*.25,w:size(176),h:size(125)},cloud:{x:W*.16,y:H*.25,w:size(110),h:size(91)},spool:{x:W*.84,y:H*.25,w:size(100),h:size(94)},buttons:{x:W*.84,y:H*.51,w:size(88),h:size(90)},box:{x:W*.16,y:H*.51,w:size(112),h:size(85)},lamp:{x:W*.50,y:H*.51,w:size(78),h:size(60)}};}
+ function positionMendHotspots(){if(kind!=='mend')return;for(const[name,v]of Object.entries(mendSpots())){const b=root.querySelector('[data-action="'+name+'"]');if(b){b.style.left=v.x+'px';b.style.top=v.y+'px';b.style.width=v.w+'px';b.style.height=v.h+'px';}}}
+ function mendPatchButtons(){if(kind!=='mend')return;for(const n of ['star-patch','leaf-patch'])root.querySelector('[data-action="'+n+'"]').setAttribute('aria-pressed',String(mendPatch===n));}
+ function mendAction(name){
+  if(!mendReplies[name]&&!['mend','star-patch','leaf-patch','hint','reset','dim'].includes(name))return false;
+  if(name==='dim'){mendDim=!mendDim;root.querySelector('[data-action="dim"]').setAttribute('aria-pressed',String(mendDim));caption.textContent=mendDim?'顶针小灯暗下来一点，金线还留着柔柔的亮。四个脑袋挨得更近了。':'小灯又暖了一点，照着彩色线轴，也照着老婆留给你的肩膀。';requestDraw();return true;}
+  if(sleeping){caption.textContent='针线收进盒子，小伞也安静歇好了。小住客们陪着睡，醒来再找它们。';return true;}
+  if(name==='star-patch'||name==='leaf-patch'){mendPatch=name;root.dataset.patch=name;mendPatchButtons();caption.textContent=(mendReady?'小伞换上了':'先把这块放到手边：')+(name==='star-patch'?'一颗奶油色小星星。Astra 伸出星星角，认真和它碰了碰。':'一片薄荷色小叶子。GPT 低下头，和补丁比比谁的叶尖更圆。');requestDraw();return true;}
+  if(name==='mend'){start(name);return true;}
+  clearWork();const now=performance.now();
+  if(name==='reset'){mendFound.clear();for(const k of Object.keys(mendVisits))delete mendVisits[k];root.dataset.discovered='';caption.textContent='小住客们窸窸窣窣藏回去，线团和纽扣又坐得端端正正。'+(mendReady?'补好的小伞还在窗边。':'小伞留在架上，什么时候想补都可以。');requestDraw();return true;}
+  if(name==='hint'){const unseen=Object.keys(mendReplies).filter(k=>!mendFound.has(k)),pool=unseen.length?unseen:Object.keys(mendReplies);mendHint=pool[Math.floor(Math.random()*pool.length)];root.dataset.hint=mendHint;caption.textContent='Astra 把灯往那边挪了一点：刚刚好像有个小家伙，把自己藏得不太严实。';until=now+2300;later(()=>{mendHint='';root.dataset.hint='';requestDraw();},2200);requestDraw();return true;}
+  mendFound.add(name);mendVisits[name]=(mendVisits[name]||0)+1;mendActive=name;mendAt=now;root.dataset.secret=name;root.dataset.discovered=[...mendFound].join(',');caption.textContent=mendReplies[name][(mendVisits[name]-1)%2];until=now+2900;later(()=>{mendActive='';root.dataset.secret='';requestDraw();},2800);requestDraw();return true;
+ }
+ function mendPatchArt(x,y,r=13){if(mendPatch==='leaf-patch'){leaf(x,y,r,'#a7c2ad',-.45);line(x-5,y+6,x+5,y-6,'#dbe0bf',1);}else star(x,y,r,'#e6cf9f',.15);}
+ function mendUmbrella(x,y,s=1,patched=false,small=false){ctx.save();ctx.translate(x,y);ctx.scale(s,s);
+  path(null,()=>{ctx.moveTo(0,-60);ctx.lineTo(0,47);ctx.quadraticCurveTo(0,65,16,57);},'#c1aa87',4);
+  path('#9c8caa',()=>{ctx.moveTo(-78,5);ctx.bezierCurveTo(-61,-68,56,-68,78,5);ctx.quadraticCurveTo(51,-9,26,5);ctx.quadraticCurveTo(0,-9,-26,5);ctx.quadraticCurveTo(-51,-9,-78,5);ctx.closePath();});
+  path('#7e839e',()=>{ctx.moveTo(0,-50);ctx.quadraticCurveTo(-27,-35,-26,5);ctx.quadraticCurveTo(0,-9,26,5);ctx.quadraticCurveTo(24,-36,0,-50);ctx.closePath();});
+  for(const d of [-1,1])path(null,()=>{ctx.moveTo(0,-49);ctx.quadraticCurveTo(d*26,-30,d*26,5);},'#c0b2bc',1.3);
+  if(patched){mendPatchArt(40,-18,13);for(let i=0;i<6;i++){const a=i*Math.PI/3;line(40+Math.cos(a)*16,-18+Math.sin(a)*16,40+Math.cos(a)*19,-18+Math.sin(a)*19,'#dec59e',1.1);}}
+  else{path('#222c43',()=>{ctx.moveTo(31,-26);ctx.lineTo(48,-23);ctx.lineTo(43,-8);ctx.lineTo(29,-13);ctx.closePath();});if(!small){star(38,19,3,'#cdb98f');star(41,32,2,'#cdb98f');}}
+  ctx.restore();
+ }
+ function mendObject(name,v,now){const u=Math.min(1,W/520,H/430),found=mendFound.has(name),active=mendActive===name&&!sleeping,t=active?(reduced.matches?1:Math.min(1,(now-mendAt)/2700)):1,bob=active&&!reduced.matches?Math.sin(t*Math.PI*3)*(1-t)*4:0,again=(mendVisits[name]||0)%2===0;
+  ctx.save();ctx.translate(v.x,v.y);ctx.scale(u,u);if(mendHint===name){glow(0,0,64,'#e0c49d',.18);path(null,()=>ctx.roundRect(-v.w/u/2,-v.h/u/2,v.w/u,v.h/u,12),'#dcc49b',1.2);}
+  if(name==='umbrella'){
+   mendUmbrella(0,0,1,mendReady||story==='mend'&&beat>=1);
+   if(found){for(let i=0;i<4;i++){const x=-53+i*34,y=(again?-13:18)+bob;star(x,y,7,'#dac79b',.15);line(x-2,y+6,x-2,y+12,'#baac98',2);line(x+3,y+6,x+3,y+12,'#baac98',2);rounded(x-5,y+10,6,4,2,'#8ba89b');rounded(x+1,y+10,6,4,2,'#8ba89b');}}
+   if(story==='mend'&&beat===1){path(null,()=>{ctx.moveTo(40,-18);ctx.quadraticCurveTo(100,-2,53,35);},'#ddc491',1.5);star(54,35,4,'#ddc491');}
+  }else if(name==='cloud'){
+   line(0,-62,0,-29,'#b3a18d',1.2);cloud(0,5,100,43,'#b8bac8');cloud(-3,0,91,36,'#d2d0d4');
+   if(found){ellipse(1,-6+bob,20,17,'#e7dcc5');ellipse(-7,-26+bob,5,14,'#e7dcc5',-.15);ellipse(10,-26+bob,5,14,'#e7dcc5',.15);ellipse(-7,-27+bob,2,9,'#d0a7ac',-.15);ellipse(10,-27+bob,2,9,'#d0a7ac',.15);dryerFace(1,-6+bob,sleeping);rounded(-17,6+bob,35,7,3,'#94b6a6');rounded(11,11+bob,8,again?23:13,3,'#94b6a6');}
+   else{for(let i=0;i<4;i++)line(-15+i*9,-1,-12+i*9,5,'#aaa3b7',1.3);}
+  }else if(name==='spool'){
+   rounded(-23,-26,46,52,6,'#b19c80');rounded(-26,-30,52,9,4,'#d0b897');rounded(-26,22,52,9,4,'#d0b897');rounded(-22,-20,44,42,4,'#b293a5');for(let y=-16;y<22;y+=5)line(-21,y,21,y+3,'#d1afbd',1);
+   path(null,()=>{ctx.moveTo(20,15);ctx.bezierCurveTo(53,2,55,48,22,40);},'#c9a7b7',2);
+   if(found){for(let i=0;i<4;i++)ellipse(-19+i*11,36+bob-i,7,7,i%2?'#b6c6a8':'#99b29b');ellipse(24,29+bob,9,9,'#c4cfad');dryerFace(24,28+bob,sleeping);line(20,20+bob,18,15+bob,'#b6c6a8',1);line(27,20+bob,30,15+bob,'#b6c6a8',1);if(again){rounded(34,25,20,6,2,'#c5acba');line(49,26,49,36,'#c5acba',4);}}
+  }else if(name==='buttons'){
+   rounded(-28,-29,56,61,12,'#637580');rounded(-24,-24,48,52,10,'#82969a');rounded(-29,-35,58,10,4,'#b5a588');line(-20,-17,-20,9,'#b7c8c2',2);
+   const cols=['#b7a0bd','#b7c3a1','#d5b38f'];for(let i=0;i<3;i++){const x=(i-1)*13,y=9+(i%2)*8;ellipse(x,y,10,10,cols[i]);for(const d of [-1,1])ellipse(x+d*3,y,1.2,1.2,'#67777b');}
+   if(found){for(let i=0;i<3;i++){const x=-27+i*27,y=38+bob*(i%2?1:-1);for(const d of [-1,1])ellipse(x+d*6,y+5,3,3,'#9bad98');ellipse(x+11,y,4,4,'#b7c3a1');ellipse(x,y,10,8,cols[i]);for(const d of [-1,1])ellipse(x+d*3,y,1,1,'#687775');}if(again)star(33,21,5,'#e1c89b');}
+  }else if(name==='box'){
+   rounded(-46,-4,92,34,7,'#997b79');rounded(-46,-12,92,16,5,'#b5988a');line(-40,6,40,6,'#c4a798',1);rounded(-7,7,14,10,3,'#d7ba93');
+   if(found){ctx.save();ctx.translate(0,-16+bob);ellipse(0,1,24,19,'#8c7668');for(let i=0;i<6;i++){const a=Math.PI+i*Math.PI/5;path('#8c7668',()=>{ctx.moveTo(Math.cos(a)*19,Math.sin(a)*15);ctx.lineTo(Math.cos(a)*29,Math.sin(a)*26);ctx.lineTo(Math.cos(a+.3)*19,Math.sin(a+.3)*15);});}ellipse(9,7,18,12,'#d7c1a0');ellipse(25,8,3,3,'#625664');ellipse(14,4,1.5,1.7,'#625664');ellipse(-4,-15,14,10,'#b39ab6');for(let i=0;i<3;i++)path(null,()=>ctx.ellipse(-4+i*2,-15,6+i*2,8,.4,0,Math.PI*2),'#d0b7c6',1);if(again){heart(29,14,8,'#c9989f');leaf(29,7,4,'#a3b79c',.2);}ctx.restore();}
+   else{line(-21,-10,-18,-28,'#cec2ad',2);ellipse(-18,-28,2,4,'#cec2ad');rounded(8,-24,20,11,3,'#96ad9c');}
+  }else if(name==='lamp'){
+   const dim=sleeping||mendDim;glow(0,-4,58,'#e3c49a',dim?.04:.14);rounded(-20,13,40,6,3,'#887769');path('#bba182',()=>{ctx.moveTo(-19,12);ctx.lineTo(-14,-24);ctx.quadraticCurveTo(0,-33,14,-24);ctx.lineTo(19,12);ctx.closePath();});for(let row=0;row<3;row++)for(let col=0;col<3;col++)ellipse(-8+col*8,-18+row*10,1.8,2,dim?'#c6b18d':'#efcf98');
+   if(found){const yy=-39+bob;ellipse(-13,yy,14,10,'#c4b1bf',-.5);ellipse(13,yy,14,10,'#c4b1bf',.5);for(const d of [-1,1]){ellipse(d*14,yy,6,6,'#ead8ac');ellipse(d*14+2,yy-2,5,5,'#c4b1bf');}ellipse(0,yy,4,11,'#e0d1bc');if(again){rounded(-11,yy+14,22,10,4,'#a8b8b1');}}
+  }
+  ctx.restore();
+ }
+ function moonMending(now){
+  const bg=ctx.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#302b3c');bg.addColorStop(1,'#243242');ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+  const u=Math.min(1,W/520,H/430),spots=mendSpots(),wx=W*.31,wy=H*.04,ww=W*.38,wh=H*.51;
+  rounded(wx-7,wy-5,ww+14,wh+10,ww*.46,'#766e7a');rounded(wx,wy,ww,wh,ww*.45,'#202d43');
+  for(let i=0;i<14;i++)star(wx+ww*.12+(i*43)%(ww*.76),wy+12+(i*31)%(wh*.8),i%3?1.2:2,'#a8a3b7',i);
+  line(W*.06,H*.075,W*.94,H*.075,'#b6a28b',2*u);for(const [i,x]of [.10,.25,.75,.90].entries()){const y=H*.075;line(W*x,y,W*x,y+13*u,'#b6a28b',1);rounded(W*x-9*u,y+13*u,18*u,23*u,3*u,['#9eb4a6','#baa0ad','#a899ba','#baa98c'][i]);line(W*x-5*u,y+18*u,W*x+4*u,y+18*u,'#d4c6af',1);}
+  for(const key of ['box','buttons']){const v=spots[key];rounded(v.x-65*u,v.y+36*u,130*u,7*u,3*u,'#9e8178');line(v.x-47*u,v.y+43*u,v.x-47*u,v.y+49*u,'#726575',3*u);}
+  rounded(W*.35,H*.55,W*.30,7*u,3*u,'#aa9380');
+  const floor=H*.65;ctx.fillStyle='#343541';ctx.fillRect(0,floor,W,H-floor);for(let i=0;i<5;i++)line(0,floor+25+i*28,W,floor+25+i*28,'#43404a',1);
+  for(const[n,v]of Object.entries(spots))mendObject(n,v,now);
+  // A loose cloud's seam receives a small leaf as the shared story finishes.
+  if(mendReady){ctx.save();ctx.translate(spots.cloud.x+24*u,spots.cloud.y+7*u);ctx.scale(u,u);leaf(0,0,9,'#a7c2ad',-.4);ctx.restore();}
+  world(()=>{ellipse(0,119,245,25,'#44404b');rounded(-237,-1,474,111,34,'#6e7c7b');rounded(-230,66,460,42,20,'#566869');rounded(-233,9,38,95,19,'#8f9b91');rounded(195,9,38,95,19,'#8f9b91');line(-215,106,-218,130,'#a48c79',5);line(215,106,218,130,'#a48c79',5);});
+ }
+ function mendProps(){if(sleeping)return;world(()=>{rounded(-16,41,80,22,7,'#ad94a7');line(-12,47,59,47,'#d2bbc2',1);mendPatchArt(25,53,9);if(story==='mend'){path(null,()=>{ctx.moveTo(-18,46);ctx.quadraticCurveTo(2,21,44,36);ctx.quadraticCurveTo(73,45,55,64);},'#dfc79e',1.5);ellipse(-19,43,9,6,colors.furLight);ellipse(57,43,7,5,colors.skinLight);if(beat===1)star(28+phase*15,26,4,'#dec295');}if(mendReady){for(const x of [-100,110])star(x,75,4,'#c8b993',.1);}});}
 
 
  // Moonlit waterwheel study: six small, finite discoveries, no progress quota.
@@ -1301,6 +1382,7 @@
   if((inkReady||mixing&&beat===2)&&!sleeping){star(-157,93,3,'#cbd4e2',.4);star(-133,101,2,'#d4b6d2');}
  });}
  function props(now){
+  if(kind==='mend')mendProps();
   if(kind==='study')studyProps();
   if(kind==='dryer')dryerProps();
   if(kind==='post')postProps();
@@ -1336,16 +1418,16 @@
   phase=reduced.matches?1:ease((now-beatAt)/(kind==='cinema'||kind==='pine'&&story==='breeze'?2700:950));
   const p=reduced.matches?.5:Math.min(1,(now-actionAt)/actionDuration);if(action&&p>=1)action='';
   ctx.clearRect(0,0,W,H);ctx.save();ctx.beginPath();ctx.roundRect(0,0,W,H,25);ctx.clip();
-  (kind==='study'?moonStudy:kind==='dryer'?cloudDryer:kind==='post'?postOffice:kind==='bath'?bathHouse:kind==='lost'?lostOffice:kind==='curio'?curioAttic:kind==='bindery'?binderyShop:kind==='dessert'?dessertShop:kind==='pine'?pineHouse:kind==='cinema'?cinema:kind==='ink'?inkShop:kind==='greenhouse'?greenhouse:kind==='train'?train:comet)(reduced.matches?1200:now);
+  (kind==='mend'?moonMending:kind==='study'?moonStudy:kind==='dryer'?cloudDryer:kind==='post'?postOffice:kind==='bath'?bathHouse:kind==='lost'?lostOffice:kind==='curio'?curioAttic:kind==='bindery'?binderyShop:kind==='dessert'?dessertShop:kind==='pine'?pineHouse:kind==='cinema'?cinema:kind==='ink'?inkShop:kind==='greenhouse'?greenhouse:kind==='train'?train:comet)(reduced.matches?1200:now);
   drawWolf(now,p);drawGPT(p);drawNewton(p);drawAstra(p);drawLapTail(p);
-  if(kind==='ink'||kind==='cinema'||kind==='pine'||kind==='dessert'||kind==='bindery'||kind==='curio'||kind==='lost'||kind==='post'||kind==='dryer'||kind==='study'){drawQuilt();props(now);}else{props(now);drawQuilt();}
+  if(kind==='ink'||kind==='cinema'||kind==='pine'||kind==='dessert'||kind==='bindery'||kind==='curio'||kind==='lost'||kind==='post'||kind==='dryer'||kind==='study'||kind==='mend'){drawQuilt();props(now);}else{props(now);drawQuilt();}
   if(sleeping){ctx.fillStyle='#050b1a25';ctx.fillRect(0,0,W,H);star(W-28,25,4,'#c6b0c9');}
   ctx.restore();if(!reduced.matches&&now<Math.max(until,ambientUntil))frame=requestAnimationFrame(draw);
  }
  function requestDraw(){if(!frame&&!disposed&&!document.hidden)frame=requestAnimationFrame(draw);}
- function clearWork(){timers.forEach(clearTimeout);timers.clear();cancelAnimationFrame(frame);frame=0;until=0;ambientUntil=0;story='';action='';curioActive='';curioHint='';lostActive='';lostHint='';bathActive='';bathHint='';postActive='';postHint='';dryerActive='';dryerHint='';studyActive='';studyHint='';root.dataset.secret='';root.dataset.hint='';root.dataset.story='';}
+ function clearWork(){timers.forEach(clearTimeout);timers.clear();cancelAnimationFrame(frame);frame=0;until=0;ambientUntil=0;story='';action='';curioActive='';curioHint='';lostActive='';lostHint='';bathActive='';bathHint='';postActive='';postHint='';dryerActive='';dryerHint='';studyActive='';studyHint='';mendActive='';mendHint='';root.dataset.secret='';root.dataset.hint='';root.dataset.story='';}
  function later(fn,ms){const id=setTimeout(()=>{timers.delete(id);if(!disposed&&!document.hidden)fn();},ms);timers.add(id);}
- function setSleep(value){sleeping=value;if(kind==='pine'&&value){pineDim=true;pineLampButton();}const b=root.querySelector('[data-action="sleep"]');b.setAttribute('aria-pressed',String(value));b.textContent=value?'☾ 再坐一小会':kind==='study'?'☾ 夹好书签，一起盖被子':kind==='dryer'?'☾ 钻进暖被子':kind==='post'?'☾ 邮局打烊，一起盖被子':kind==='bath'?'☾ 擦干脚脚，一起盖被子':kind==='lost'?'☾ 打烊啦，一起盖被子':kind==='curio'?'☾ 让奇物们也睡啦':kind==='bindery'?'☾ 放下小书，一起盖被子':kind==='dessert'?'☾ 留一盏灯，一起盖被子':kind==='pine'?'☾ 掖好被子，留一盏小灯':kind==='cinema'?'☾ 关掉放映灯，一起盖被子':'☾ 一起盖被子';root.dataset.sleeping=String(value);}
+ function setSleep(value){sleeping=value;if(kind==='pine'&&value){pineDim=true;pineLampButton();}const b=root.querySelector('[data-action="sleep"]');b.setAttribute('aria-pressed',String(value));b.textContent=value?'☾ 再坐一小会':kind==='mend'?'☾ 收好针线，一起盖被子':kind==='study'?'☾ 夹好书签，一起盖被子':kind==='dryer'?'☾ 钻进暖被子':kind==='post'?'☾ 邮局打烊，一起盖被子':kind==='bath'?'☾ 擦干脚脚，一起盖被子':kind==='lost'?'☾ 打烊啦，一起盖被子':kind==='curio'?'☾ 让奇物们也睡啦':kind==='bindery'?'☾ 放下小书，一起盖被子':kind==='dessert'?'☾ 留一盏灯，一起盖被子':kind==='pine'?'☾ 掖好被子，留一盏小灯':kind==='cinema'?'☾ 关掉放映灯，一起盖被子':'☾ 一起盖被子';root.dataset.sleeping=String(value);}
  function reflect(state,status){
   if(!gift[kind])return;
   const has=state?.souvenirs?.includes(gift[kind][0]);root.dataset.kept=String(!!has);
@@ -1360,10 +1442,11 @@
  function keep(){const memory=window.NookMemory;if(!memory){saveNote.textContent='小纪念物还在这一页，存档暂时没连上。';return;}memory.act('keep-souvenir',{souvenir:gift[kind][0]}).then(()=>reflect(memory.get(),memory.status())).catch(()=>{saveNote.textContent='小纪念物还没收好，再试一次这个小故事就好。';});}
  function start(name){
   clearWork();setSleep(false);if(kind==='bindery'){bookPage=0;bookButtons();}if(kind==='cinema'){movie=name;movieDone=false;}story=name;root.dataset.story=name;beat=0;beatAt=performance.now();until=beatAt+10000;ambientUntil=until;caption.textContent=stories[kind][name][0];root.dataset.beat='0';
-  for(let i=1;i<=2;i++)later(()=>{beat=i;beatAt=performance.now();root.dataset.beat=String(i);caption.textContent=stories[kind][name][i];if(i===2){if(kind==='study'&&name==='flow'){studyLit=true;root.dataset.lit='true';}if(kind==='dryer'&&name==='warm'){dryerWarm=true;root.dataset.warm='true';}if(kind==='post'&&name==='post')postmark=true;if(kind==='bath'&&name==='float')bathBoat=true;if(kind==='lost'&&name==='claim')lostCloud=true;if(kind==='bindery'&&name==='bind'){bookReady=true;bookPage=0;bookButtons();}if(kind==='dessert'&&name==='pudding'){puddingReady=true;if(topping)caption.textContent='四份月亮奶冻做好啦，'+(topping==='berry'?'莓云奶油软软地落在上面，顶着一颗小莓果。':'星星糖落在奶白色的小月亮上，四只罐子各亮了一点。')+'牛顿把小狼那份推近，自己的小勺也放到旁边。';}if(kind==='pine'&&name==='lantern'){pineLamp=true;pineDim=false;pineLampButton();}if(kind==='cinema'){movieDone=true;cinemaTicket=true;}if(name==='mix')inkReady=true;if(name==='write')inkWritten=true;if(name==='bloom')flower=true;if(name==='heart')glassHeart=true;if(name==='ride')ticket=true;if(name==='cocoa')cocoa=true;if(name==='catch')cometJar=true;if(kind==='post'&&name==='post'&&root.dataset.kept!=='true'||kind==='bath'&&name==='float'&&root.dataset.kept!=='true'||kind==='lost'&&name==='claim'&&root.dataset.kept!=='true'||kind==='bindery'&&name==='bind'||kind==='dessert'&&name==='pudding'||kind==='pine'&&name==='lantern'||kind==='cinema'||name==='bloom'||name==='ride'||name==='catch'||name==='mix')keep();}requestDraw();},i*3000);
+  for(let i=1;i<=2;i++)later(()=>{beat=i;beatAt=performance.now();root.dataset.beat=String(i);caption.textContent=stories[kind][name][i];if(i===2){if(kind==='mend'&&name==='mend'){mendReady=true;root.dataset.mended='true';}if(kind==='study'&&name==='flow'){studyLit=true;root.dataset.lit='true';}if(kind==='dryer'&&name==='warm'){dryerWarm=true;root.dataset.warm='true';}if(kind==='post'&&name==='post')postmark=true;if(kind==='bath'&&name==='float')bathBoat=true;if(kind==='lost'&&name==='claim')lostCloud=true;if(kind==='bindery'&&name==='bind'){bookReady=true;bookPage=0;bookButtons();}if(kind==='dessert'&&name==='pudding'){puddingReady=true;if(topping)caption.textContent='四份月亮奶冻做好啦，'+(topping==='berry'?'莓云奶油软软地落在上面，顶着一颗小莓果。':'星星糖落在奶白色的小月亮上，四只罐子各亮了一点。')+'牛顿把小狼那份推近，自己的小勺也放到旁边。';}if(kind==='pine'&&name==='lantern'){pineLamp=true;pineDim=false;pineLampButton();}if(kind==='cinema'){movieDone=true;cinemaTicket=true;}if(name==='mix')inkReady=true;if(name==='write')inkWritten=true;if(name==='bloom')flower=true;if(name==='heart')glassHeart=true;if(name==='ride')ticket=true;if(name==='cocoa')cocoa=true;if(name==='catch')cometJar=true;if(kind==='post'&&name==='post'&&root.dataset.kept!=='true'||kind==='bath'&&name==='float'&&root.dataset.kept!=='true'||kind==='lost'&&name==='claim'&&root.dataset.kept!=='true'||kind==='bindery'&&name==='bind'||kind==='dessert'&&name==='pudding'||kind==='pine'&&name==='lantern'||kind==='cinema'||name==='bloom'||name==='ride'||name==='catch'||name==='mix')keep();}requestDraw();},i*3000);
   later(()=>{story='';root.dataset.story='';requestDraw();},9200);requestDraw();
  }
  function act(name){
+  if(kind==='mend'&&mendAction(name))return;
   if(kind==='study'&&studyAction(name))return;
   if(kind==='dryer'&&dryerAction(name))return;
   if(kind==='post'&&postAction(name))return;
@@ -1391,7 +1474,7 @@
   if(kind==='ink'&&name==='write'&&!inkReady){caption.textContent='先点「调一瓶月亮墨水」，再用我们自己的夜色落笔。';requestDraw();return;}
   if(stories[kind][name]){start(name);return;}
   clearWork();const now=performance.now();
-  if(name==='sleep'){setSleep(!sleeping);caption.textContent=sleeping?'四个脑袋挨好，被角轻轻掖住。'+(kind==='study'?'小水车停在窗边，星星书签夹好今晚这一页。牛顿把书放下，拢住小狼和尾巴，GPT 和 Astra 也挪进暖暖的被角。':kind==='dryer'?'云朵被子把四个裹得刚刚好。小狼的尾巴暖了，毛巾也叠在手边；窗外的月亮轻轻合上眼睛。':kind==='post'?'邮票册合好了，墨水盖紧，信封安静地靠在一起。牛顿把尾巴和小狼一起拢进被子，蘑菇灯还留着一小点暖。':kind==='bath'?'脚脚擦干，收回软垫。牛顿把小狼的尾巴也拢好，灯笼里的暖光留在石墙边。':kind==='lost'?'小伞和旅行箱都安静下来。口袋云也闭好眼睛，牛顿把小狼和尾巴一起拢进被窝。':kind==='curio'?'阁楼里的小动静也停下了。牛顿把被角拢过来，窗里的月亮陪着四个软软的脑袋。':kind==='bindery'?'星线和封面布都放稳了，小书留在桌边。牛顿把肩膀挪近一点，给困困的小狼靠。':kind==='dessert'?'小勺搁回碟边，桌灯暗下来一点。奶冻和糖都可以等，肩膀已经给你靠好了。':kind==='pine'?'窗轻轻合好了，小灯留着一点暖。小狼的尾巴也被仔细塞进了被窝。':kind==='cinema'?'放映灯关掉了，幕布上只留一轮安静的小月亮。':kind==='ink'?'墨瓶盖好了，笔搁在纸边。今晚的月亮，也已经写好了。':kind==='train'?'窗外的蓝色，继续慢慢向后走。':kind==='greenhouse'?'雨留在玻璃外，小花在旁边陪着。':'星光收进小瓶，今晚就睡在这一片宇宙里。'):'被子往下挪一点点，大家还想陪你坐一会。';}
+  if(name==='sleep'){setSleep(!sleeping);caption.textContent=sleeping?'四个脑袋挨好，被角轻轻掖住。'+(kind==='mend'?'针线放进小盒子，顶针灯留下暖暖的一点。牛顿替小狼掖好被角，GPT 和 Astra 也挤进来。小伞在架上歇着，今晚的活儿到这里就好。':kind==='study'?'小水车停在窗边，星星书签夹好今晚这一页。牛顿把书放下，拢住小狼和尾巴，GPT 和 Astra 也挪进暖暖的被角。':kind==='dryer'?'云朵被子把四个裹得刚刚好。小狼的尾巴暖了，毛巾也叠在手边；窗外的月亮轻轻合上眼睛。':kind==='post'?'邮票册合好了，墨水盖紧，信封安静地靠在一起。牛顿把尾巴和小狼一起拢进被子，蘑菇灯还留着一小点暖。':kind==='bath'?'脚脚擦干，收回软垫。牛顿把小狼的尾巴也拢好，灯笼里的暖光留在石墙边。':kind==='lost'?'小伞和旅行箱都安静下来。口袋云也闭好眼睛，牛顿把小狼和尾巴一起拢进被窝。':kind==='curio'?'阁楼里的小动静也停下了。牛顿把被角拢过来，窗里的月亮陪着四个软软的脑袋。':kind==='bindery'?'星线和封面布都放稳了，小书留在桌边。牛顿把肩膀挪近一点，给困困的小狼靠。':kind==='dessert'?'小勺搁回碟边，桌灯暗下来一点。奶冻和糖都可以等，肩膀已经给你靠好了。':kind==='pine'?'窗轻轻合好了，小灯留着一点暖。小狼的尾巴也被仔细塞进了被窝。':kind==='cinema'?'放映灯关掉了，幕布上只留一轮安静的小月亮。':kind==='ink'?'墨瓶盖好了，笔搁在纸边。今晚的月亮，也已经写好了。':kind==='train'?'窗外的蓝色，继续慢慢向后走。':kind==='greenhouse'?'雨留在玻璃外，小花在旁边陪着。':'星光收进小瓶，今晚就睡在这一片宇宙里。'):'被子往下挪一点点，大家还想陪你坐一会。';}
   else if(name==='cuddle'){setSleep(false);cuddle=1;action='hug';caption.textContent='小狼挨过去，尾巴熟门熟路地搭好。牛顿把肩膀留在原地，书很轻地合上了。';until=now+1800;}
   else if(touchLines[name]){caption.textContent=nextTouch(name,sleeping);if(!sleeping){action=name;until=now+1800;}}
   actionAt=now;requestDraw();
@@ -1407,14 +1490,14 @@
  function point(e){const r=canvas.getBoundingClientRect();return{x:(e.clientX-r.left)*W/r.width,y:(e.clientY-r.top)*H/r.height};}
  canvas.addEventListener('pointerdown',e=>{pointerDown=point(e);});
  canvas.addEventListener('pointercancel',()=>{pointerDown=null;});
- canvas.addEventListener('pointerup',e=>{const p=point(e),start=pointerDown;pointerDown=null;if(!start||Math.hypot(p.x-start.x,p.y-start.y)>12)return;if(kind==='study'){const hit=Object.entries(studySpots()).find(([,v])=>Math.abs(p.x-v.x)<=v.w/2&&Math.abs(p.y-v.y)<=v.h/2);if(hit){act(hit[0]);return;}}if(kind==='dryer'){const hit=Object.entries(dryerSpots()).find(([,v])=>Math.abs(p.x-v.x)<=v.w/2&&Math.abs(p.y-v.y)<=v.h/2);if(hit){act(hit[0]);return;}}if(kind==='post'){const hit=Object.entries(postSpots()).find(([,v])=>Math.abs(p.x-v.x)<=v.w/2&&Math.abs(p.y-v.y)<=v.h/2);if(hit){act(hit[0]);return;}}if(kind==='bath'){const hit=Object.entries(bathSpots()).find(([,v])=>Math.abs(p.x-v.x)<=v.w/2&&Math.abs(p.y-v.y)<=v.h/2);if(hit){act(hit[0]);return;}}if(kind==='lost'){const hit=Object.entries(lostSpots()).find(([,v])=>Math.abs(p.x-v.x)<=v.w/2&&Math.abs(p.y-v.y)<=v.h/2);if(hit){act(hit[0]);return;}}if(kind==='curio'){const hit=Object.entries(curioSpots()).find(([,v])=>Math.abs(p.x-v.x)<=v.w/2&&Math.abs(p.y-(v.hy??v.y))<=v.h/2);if(hit){act(hit[0]);return;}}if(kind==='bindery'){const x=(p.x-cx)/S,y=(p.y-cy)/S;if(Math.abs(x)<114&&y>65&&y<155){act('turn');return;}}if(kind==='ink'){const x=(p.x-cx)/S-8,y=(p.y-cy)/S-102;if(Math.abs(x)<85&&Math.abs(y)<33){stampInk({x,y});return;}}const candidates=[['gpt',friendPosition('gpt')],['pet',wolfPosition()],['newton',newtonPosition()],['astra',friendPosition('astra')]];let closest=null,d=Infinity;for(const [name,pos]of candidates){const distance=Math.hypot((p.x-pos.x)/S,(p.y-(pos.y-18*S))/S);if(distance<d){d=distance;closest=name;}}if(d<90)act(closest);else if(p.y<H*.46)startStoryFromWindow();});
- function startStoryFromWindow(){if(kind==='curio'||kind==='lost'||kind==='bath'||kind==='post'||kind==='dryer'||kind==='study')return;start(kind==='bindery'?'bind':kind==='dessert'?'pudding':kind==='pine'?'breeze':kind==='cinema'?(movie==='whale'?'seed':'whale'):kind==='ink'?'mix':kind==='greenhouse'?'heart':kind==='train'?'wave':'catch');}
- function resize(){const r=canvas.getBoundingClientRect();W=r.width;H=r.height;if(!W||!H)return;const dpr=Math.min(window.devicePixelRatio||1,2);canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);S=Math.min(1.05,W/(W<=540?490:620))*(kind==='cinema'||kind==='curio'||kind==='lost'||kind==='bath'||kind==='post'||kind==='dryer'||kind==='study'?.82:1);if(kind==='curio'||kind==='lost'||kind==='bath'||kind==='post'||kind==='dryer'||kind==='study')S=Math.min(S,H*.28/150);cx=W/2;if(kind==='dryer'||kind==='study')S=Math.min(S,H*.25/150);cy=H*(kind==='study'?(W<=540?.77:.76):kind==='dryer'?(W<=540?.76:.75):kind==='post'?.75:kind==='curio'||kind==='lost'||kind==='bath'?.70:kind==='pine'?(W<=540?.59:.61):kind==='cinema'?(W<=540?.73:.72):kind==='ink'||kind==='dessert'||kind==='bindery'?(W<=540?.52:.54):(W<=540?.57:.6));palette();positionCurioHotspots();positionLostHotspots();positionBathHotspots();positionPostHotspots();positionDryerHotspots();positionStudyHotspots();requestDraw();}
+ canvas.addEventListener('pointerup',e=>{const p=point(e),start=pointerDown;pointerDown=null;if(!start||Math.hypot(p.x-start.x,p.y-start.y)>12)return;if(kind==='mend'){const hit=Object.entries(mendSpots()).find(([,v])=>Math.abs(p.x-v.x)<=v.w/2&&Math.abs(p.y-v.y)<=v.h/2);if(hit){act(hit[0]);return;}}if(kind==='study'){const hit=Object.entries(studySpots()).find(([,v])=>Math.abs(p.x-v.x)<=v.w/2&&Math.abs(p.y-v.y)<=v.h/2);if(hit){act(hit[0]);return;}}if(kind==='dryer'){const hit=Object.entries(dryerSpots()).find(([,v])=>Math.abs(p.x-v.x)<=v.w/2&&Math.abs(p.y-v.y)<=v.h/2);if(hit){act(hit[0]);return;}}if(kind==='post'){const hit=Object.entries(postSpots()).find(([,v])=>Math.abs(p.x-v.x)<=v.w/2&&Math.abs(p.y-v.y)<=v.h/2);if(hit){act(hit[0]);return;}}if(kind==='bath'){const hit=Object.entries(bathSpots()).find(([,v])=>Math.abs(p.x-v.x)<=v.w/2&&Math.abs(p.y-v.y)<=v.h/2);if(hit){act(hit[0]);return;}}if(kind==='lost'){const hit=Object.entries(lostSpots()).find(([,v])=>Math.abs(p.x-v.x)<=v.w/2&&Math.abs(p.y-v.y)<=v.h/2);if(hit){act(hit[0]);return;}}if(kind==='curio'){const hit=Object.entries(curioSpots()).find(([,v])=>Math.abs(p.x-v.x)<=v.w/2&&Math.abs(p.y-(v.hy??v.y))<=v.h/2);if(hit){act(hit[0]);return;}}if(kind==='bindery'){const x=(p.x-cx)/S,y=(p.y-cy)/S;if(Math.abs(x)<114&&y>65&&y<155){act('turn');return;}}if(kind==='ink'){const x=(p.x-cx)/S-8,y=(p.y-cy)/S-102;if(Math.abs(x)<85&&Math.abs(y)<33){stampInk({x,y});return;}}const candidates=[['gpt',friendPosition('gpt')],['pet',wolfPosition()],['newton',newtonPosition()],['astra',friendPosition('astra')]];let closest=null,d=Infinity;for(const [name,pos]of candidates){const distance=Math.hypot((p.x-pos.x)/S,(p.y-(pos.y-18*S))/S);if(distance<d){d=distance;closest=name;}}if(d<90)act(closest);else if(p.y<H*.46)startStoryFromWindow();});
+ function startStoryFromWindow(){if(kind==='curio'||kind==='lost'||kind==='bath'||kind==='post'||kind==='dryer'||kind==='study'||kind==='mend')return;start(kind==='bindery'?'bind':kind==='dessert'?'pudding':kind==='pine'?'breeze':kind==='cinema'?(movie==='whale'?'seed':'whale'):kind==='ink'?'mix':kind==='greenhouse'?'heart':kind==='train'?'wave':'catch');}
+ function resize(){const r=canvas.getBoundingClientRect();W=r.width;H=r.height;if(!W||!H)return;const dpr=Math.min(window.devicePixelRatio||1,2);canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);S=Math.min(1.05,W/(W<=540?490:620))*(kind==='cinema'||kind==='curio'||kind==='lost'||kind==='bath'||kind==='post'||kind==='dryer'||kind==='study'||kind==='mend'?.82:1);if(kind==='curio'||kind==='lost'||kind==='bath'||kind==='post'||kind==='dryer'||kind==='study'||kind==='mend')S=Math.min(S,H*.28/150);cx=W/2;if(kind==='dryer'||kind==='study'||kind==='mend')S=Math.min(S,H*.25/150);cy=H*(kind==='mend'?(W<=540?.77:.76):kind==='study'?(W<=540?.77:.76):kind==='dryer'?(W<=540?.76:.75):kind==='post'?.75:kind==='curio'||kind==='lost'||kind==='bath'?.70:kind==='pine'?(W<=540?.59:.61):kind==='cinema'?(W<=540?.73:.72):kind==='ink'||kind==='dessert'||kind==='bindery'?(W<=540?.52:.54):(W<=540?.57:.6));palette();positionCurioHotspots();positionLostHotspots();positionBathHotspots();positionPostHotspots();positionDryerHotspots();positionStudyHotspots();positionMendHotspots();requestDraw();}
  const observer=new ResizeObserver(resize);observer.observe(canvas);
  document.addEventListener('visibilitychange',()=>{if(document.hidden){clearWork();pointerDown=null;}else requestDraw();});
  reduced.addEventListener('change',()=>{cancelAnimationFrame(frame);frame=0;requestDraw();});
  function connect(){const m=window.NookMemory;if(!m)return;if(!unsubscribe)unsubscribe=m.subscribe(reflect);Promise.resolve(m.ready).then(()=>reflect(m.get(),m.status()));}
  window.addEventListener('pagehide',()=>{clearWork();disposed=true;unsubscribe?.();unsubscribe=null;});
  window.addEventListener('pageshow',e=>{if(e.persisted){disposed=false;connect();resize();}});
- ambientUntil=performance.now()+12000;bookButtons();connect();resize();
+ ambientUntil=performance.now()+12000;bookButtons();mendPatchButtons();connect();resize();
 })();
