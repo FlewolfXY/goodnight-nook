@@ -301,5 +301,17 @@
     "family": "moon-mending-shop",
     "order": 26,
     "createdOn": "2026-10-29"
+  },
+  {
+    "id": "pumpkin-cloud-teahouse",
+    "title": "南瓜晚安茶屋",
+    "subtitle": "挑一朵小猫或小鲸蒸汽，窝进南瓜灯照着的软座",
+    "path": "scenes/pumpkin-cloud-teahouse.html",
+    "episode": 25,
+    "type": "南瓜灯下",
+    "color": "#c5aa8d",
+    "family": "pumpkin-cloud-teahouse",
+    "order": 27,
+    "createdOn": "2026-10-31"
   }
 ]

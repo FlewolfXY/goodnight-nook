@@ -2,7 +2,7 @@
 
 给 Flewolf、GPT、Astra 和牛顿的一间小小晚安客厅。摸摸小伙伴、一起盖被子，也可以去散步，发现背景里藏着的小东西。
 
-这里是晚安小窝的独立源码备份与 GitHub Pages 发布项目。当前保存 **26 份场景、24 期小梦**，截至 2026-10-29 的「月亮修补铺」。原有 2D 画面、不同的摸摸台词、隐藏互动、相册和纪念物都保留。
+这里是晚安小窝的独立源码备份与 GitHub Pages 发布项目。当前保存 **27 份场景、25 期小梦**，截至 2026-10-31 的「南瓜晚安茶屋」。原有 2D 画面、不同的摸摸台词、隐藏互动、相册和纪念物都保留。
 
 目标仓库：`FlewolfXY/goodnight-nook`。Pages 成功部署后的入口：`https://flewolfxy.github.io/goodnight-nook/`。
 
@@ -29,7 +29,7 @@ node scripts/export-github-pages.mjs
 
 | 路径 | 内容 |
 | --- | --- |
-| `public/` | 原始首页、26 个独立场景、交互脚本、样式、相册和素材 |
+| `public/` | 原始首页、27 个独立场景、交互脚本、样式、相册和素材 |
 | `source-scenes/` | 原始场景片段，和独立场景页面一起保留 |
 | `github-pages/` | 浏览器本地存档适配、导出补丁和测试 |
 | `scripts/export-github-pages.mjs` | 从原始页面生成静态发布目录 |
